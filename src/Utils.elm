@@ -9,27 +9,6 @@ import Types exposing (..)
 
 
 
-toBinaryRow : Int -> Row
-toBinaryRow score =
-  let
-    toBinaryList rest =
-      if rest == 0 then
-        []
-      else if rest % 2 == 0 then
-        False :: toBinaryList (rest // 2)
-      else
-        True :: toBinaryList (rest // 2)
-
-    raw =
-      toBinaryList score
-        |> List.reverse
-        |> Array.fromList
-    padding =
-      Array.repeat (gridWidth - (Array.length raw)) False
-  in
-    Array.append padding raw
-
-
 isRowFull : Row -> Bool
 isRowFull row =
   Array.foldr (&&) True row
@@ -133,3 +112,24 @@ rotatePoint rotation (i, j) =
 rotatePiece : Rotation -> Piece -> Piece
 rotatePiece rotation piece =
   { piece | offsets = List.map (rotatePoint rotation) piece.offsets }
+
+
+toBinaryRow : Int -> Row
+toBinaryRow score =
+  let
+    toBinaryList rest =
+      if rest == 0 then
+        []
+      else if rest % 2 == 0 then
+        False :: toBinaryList (rest // 2)
+      else
+        True :: toBinaryList (rest // 2)
+
+    raw =
+      toBinaryList score
+        |> List.reverse
+        |> Array.fromList
+    padding =
+      Array.repeat (gridWidth - (Array.length raw)) False
+  in
+    Array.append padding raw
