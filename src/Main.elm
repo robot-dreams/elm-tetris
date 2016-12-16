@@ -1,5 +1,5 @@
 import Array exposing (Array)
-import Html exposing (Html, program, text)
+import Html exposing (br, div, Html, program, text)
 import Keyboard exposing (KeyCode)
 import Random
 import Svg exposing (rect, svg)
@@ -34,6 +34,8 @@ main = program
 type alias Model =
   { piece : Maybe Piece
   , grid : Grid
+  , level : Int
+  , score : Int
   , gameOver : Bool
   }
 
@@ -42,6 +44,8 @@ init : (Model, Cmd Msg)
 init =
   ( { piece = Nothing
     , grid = emptyGrid
+    , score = 0
+    , level = 0
     , gameOver = False
     }
   , getRandomPiece
@@ -81,12 +85,28 @@ tryTransform kind transform model =
         if canAcceptPiece model.grid transformed then
           case kind of
             Snap cmd ->
-              ( { model
-                  | grid = acceptPiece model.grid transformed |> clearFullRows
-                  , piece = Nothing
-                }
-              , cmd
-              )
+              let
+                (scoreDelta, cleared) =
+                  acceptPiece model.grid transformed |> clearFullRows
+                score = model.score + scoreDelta
+              in
+                if score >= nextLevel then
+                  ( { model
+                      | grid = cleared
+                      , piece = Nothing
+                      , level = model.level + 1
+                      , score = 0
+                    }
+                  , cmd
+                  )
+                else
+                  ( { model
+                      | grid = cleared
+                      , piece = Nothing
+                      , score = model.score + scoreDelta
+                    }
+                  , cmd
+                  )
 
             _ ->
               ( { model | piece = Just transformed }
@@ -95,12 +115,17 @@ tryTransform kind transform model =
         else
           case kind of
             Sticky cmd ->
-              ( { model
-                  | grid = acceptPiece model.grid piece |> clearFullRows
-                  , piece = Nothing
-                }
-              , cmd
-              )
+              let
+                (scoreDelta, cleared) =
+                  acceptPiece model.grid piece |> clearFullRows
+              in
+                ( { model
+                    | grid = cleared
+                    , piece = Nothing
+                    , score = model.score + scoreDelta
+                  }
+                , cmd
+                )
 
             _ ->
               (model, Cmd.none)
@@ -184,10 +209,17 @@ subscriptions model =
   if model.gameOver then
     Sub.none
   else
-    Sub.batch
-      [ Keyboard.downs handleKeyboardInput
-      , Time.every (500 * millisecond) (\_ -> Fall)
-      ]
+    let
+      freq =
+        500 - 50 * model.level
+          |> toFloat
+          |> (*) millisecond
+          |> max 25
+    in
+      Sub.batch
+        [ Keyboard.downs handleKeyboardInput
+        , Time.every freq (\_ -> Fall)
+        ]
 
 
 
@@ -198,30 +230,58 @@ view : Model -> Html Msg
 view model =
   case model.piece of
     Nothing ->
-      renderGrid model.grid
+      renderGrid model.grid model.score
 
     Just piece ->
-      renderGrid (acceptPiece model.grid piece)
+      renderGrid (acceptPiece model.grid piece) model.score
 
 
-renderGrid : Grid -> Html Msg
-renderGrid grid =
+toBinaryList : Int -> List Bool
+toBinaryList score =
+  if score == 0 then
+    []
+  else if score % 2 == 0 then
+    False :: toBinaryList (score // 2)
+  else
+    True :: toBinaryList (score // 2)
+
+
+toBinary : Int -> Row
+toBinary score =
   let
-    renderCell i j cell =
+    raw =
+      toBinaryList score
+        |> List.reverse
+        |> Array.fromList
+    padding =
+      Array.repeat (gridWidth - (Array.length raw)) False
+  in
+    Array.append padding raw
+
+
+renderGrid : Grid -> Int -> Html Msg
+renderGrid grid score =
+  let
+    renderCell on off i j cell =
       rect
         [ width "18"
         , height "18"
-        , (i + 1) * 20 |> toString |> y
+        , (i + 2) * 20 |> toString |> y
         , (j + 1) * 20 |> toString |> x
-        , fill (if cell then "#666666" else "#CCCCCC")
+        , fill (if cell then off else on)
         ]
         []
 
-    renderRow i row =
-      Array.indexedMap (renderCell i) row
+    renderRow on off i row =
+      Array.indexedMap (renderCell on off i) row
         |> Array.toList
+
+    scoreRow =
+      toBinary score
+        |> renderRow "#EEEEEE" "#AAAAAA" -1
   in
-    Array.indexedMap renderRow grid
+    Array.indexedMap (renderRow "#CCCCCC" "#666666") grid
       |> Array.toList
+      |> (::) scoreRow
       |> List.concat
-      |> svg [ viewBox "0 0 400 600", width "400px", height "600px" ]
+      |> svg [ viewBox "0 0 240 500", width "240px", height "500" ]

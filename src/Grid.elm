@@ -13,6 +13,10 @@ gridHeight : Int
 gridHeight = 22
 
 
+nextLevel : Int
+nextLevel = 2^gridWidth
+
+
 type alias Row = Array Bool
 
 
@@ -32,15 +36,35 @@ emptyGrid : Grid
 emptyGrid = Array.repeat gridHeight emptyRow
 
 
-clearFullRows : Grid -> Grid
+points : Int -> Int
+points numCleared =
+  case numCleared of
+    1 ->
+      8
+
+    2 ->
+      20
+
+    3 ->
+      60
+
+    4 ->
+      240
+
+    _ ->
+      0
+
+clearFullRows : Grid -> (Int, Grid)
 clearFullRows grid =
   let
     remaining = Array.filter (not << isRowFull) grid
     numCleared = gridHeight - Array.length remaining
   in
-    Array.append
-      (Array.repeat numCleared emptyRow)
-      remaining
+    ( points numCleared
+    , Array.append
+        (Array.repeat numCleared emptyRow)
+        remaining
+    )
 
 
 type alias Point = (Int, Int)
