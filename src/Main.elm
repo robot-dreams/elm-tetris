@@ -25,6 +25,12 @@ main = program
 
 
 
+-- Invariants;
+-- case model.piece of
+--   Nothing ->
+--     True
+--   Just piece ->
+--     canAcceptPiece model.grid model.piece
 type alias Model =
   { piece : Maybe Piece
   , grid : Grid
@@ -51,6 +57,7 @@ type Msg
   | Rotate Rotation
   | Move Direction
   | Fall
+  | Drop
   | RandomPiece
   | AddPiece (Maybe Piece)
 
@@ -58,6 +65,7 @@ type Msg
 type Kind
   = Regular
   | Sticky (Cmd Msg)
+  | Snap (Cmd Msg)
 
 
 tryTransform : Kind -> (Piece -> Piece) -> Model -> (Model, Cmd Msg)
@@ -71,21 +79,31 @@ tryTransform kind transform model =
         transformed = transform piece
       in
         if canAcceptPiece model.grid transformed then
-          ( { model | piece = Just transformed }
-          , Cmd.none
-          )
-        else
           case kind of
-            Regular ->
-              (model, Cmd.none)
-
-            Sticky cmd ->
+            Snap cmd ->
               ( { model
-                    | grid = acceptPiece model.grid piece |> clearFullRows
-                    , piece = Nothing
+                  | grid = acceptPiece model.grid transformed |> clearFullRows
+                  , piece = Nothing
                 }
               , cmd
               )
+
+            _ ->
+              ( { model | piece = Just transformed }
+              , Cmd.none
+              )
+        else
+          case kind of
+            Sticky cmd ->
+              ( { model
+                  | grid = acceptPiece model.grid piece |> clearFullRows
+                  , piece = Nothing
+                }
+              , cmd
+              )
+
+            _ ->
+              (model, Cmd.none)
 
 
 getRandomPiece : Cmd Msg
@@ -111,6 +129,9 @@ update msg model =
 
     Fall ->
       tryTransform (Sticky getRandomPiece) (movePiece Down) model
+
+    Drop ->
+      tryTransform (Snap getRandomPiece) (dropPiece model.grid) model
 
     RandomPiece ->
       (model, getRandomPiece)
@@ -140,7 +161,7 @@ handleKeyboardInput : KeyCode -> Msg
 handleKeyboardInput keyCode =
   case keyCode of
     32 -> -- spacebar
-      Rotate CCW
+      Drop
 
     38 -> -- up
       Rotate CW

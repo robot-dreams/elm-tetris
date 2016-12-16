@@ -120,6 +120,17 @@ movePiece direction piece =
     { piece | origin = add delta piece.origin }
 
 
+dropPiece : Grid -> Piece -> Piece
+dropPiece grid piece =
+  let
+    step = movePiece Down piece
+  in
+    if canAcceptPiece grid step then
+      dropPiece grid step
+    else
+      piece
+
+
 renderPiece : Piece -> List Point
 renderPiece piece =
   List.map (add piece.origin) piece.offsets

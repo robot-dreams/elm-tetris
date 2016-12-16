@@ -9526,6 +9526,22 @@ var _user$project$Grid$pieces = function () {
 var _user$project$Grid$Right = {ctor: 'Right'};
 var _user$project$Grid$Left = {ctor: 'Left'};
 var _user$project$Grid$Down = {ctor: 'Down'};
+var _user$project$Grid$dropPiece = F2(
+	function (grid, piece) {
+		dropPiece:
+		while (true) {
+			var step = A2(_user$project$Grid$movePiece, _user$project$Grid$Down, piece);
+			if (A2(_user$project$Grid$canAcceptPiece, grid, step)) {
+				var _v10 = grid,
+					_v11 = step;
+				grid = _v10;
+				piece = _v11;
+				continue dropPiece;
+			} else {
+				return piece;
+			}
+		}
+	});
 var _user$project$Grid$CCW = {ctor: 'CCW'};
 var _user$project$Grid$CW = {ctor: 'CW'};
 var _user$project$Main$renderGrid = function (grid) {
@@ -9601,34 +9617,49 @@ var _user$project$Main$tryTransform = F3(
 		if (_p1.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
-			var _p3 = _p1._0;
-			var transformed = transform(_p3);
+			var _p4 = _p1._0;
+			var transformed = transform(_p4);
 			if (A2(_user$project$Grid$canAcceptPiece, model.grid, transformed)) {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							piece: _elm_lang$core$Maybe$Just(transformed)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			} else {
 				var _p2 = kind;
-				if (_p2.ctor === 'Regular') {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-				} else {
+				if (_p2.ctor === 'Snap') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
 								grid: _user$project$Grid$clearFullRows(
-									A2(_user$project$Grid$acceptPiece, model.grid, _p3)),
+									A2(_user$project$Grid$acceptPiece, model.grid, transformed)),
 								piece: _elm_lang$core$Maybe$Nothing
 							}),
 						_1: _p2._0
 					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								piece: _elm_lang$core$Maybe$Just(transformed)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			} else {
+				var _p3 = kind;
+				if (_p3.ctor === 'Sticky') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								grid: _user$project$Grid$clearFullRows(
+									A2(_user$project$Grid$acceptPiece, model.grid, _p4)),
+								piece: _elm_lang$core$Maybe$Nothing
+							}),
+						_1: _p3._0
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			}
 		}
@@ -9659,6 +9690,7 @@ var _user$project$Main$init = {
 	_1: _user$project$Main$getRandomPiece
 };
 var _user$project$Main$RandomPiece = {ctor: 'RandomPiece'};
+var _user$project$Main$Drop = {ctor: 'Drop'};
 var _user$project$Main$Fall = {ctor: 'Fall'};
 var _user$project$Main$Move = function (a) {
 	return {ctor: 'Move', _0: a};
@@ -9668,10 +9700,10 @@ var _user$project$Main$Rotate = function (a) {
 };
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
 var _user$project$Main$handleKeyboardInput = function (keyCode) {
-	var _p4 = keyCode;
-	switch (_p4) {
+	var _p5 = keyCode;
+	switch (_p5) {
 		case 32:
-			return _user$project$Main$Rotate(_user$project$Grid$CCW);
+			return _user$project$Main$Drop;
 		case 38:
 			return _user$project$Main$Rotate(_user$project$Grid$CW);
 		case 40:
@@ -9694,12 +9726,15 @@ var _user$project$Main$subscriptions = function (model) {
 				_0: A2(
 					_elm_lang$core$Time$every,
 					500 * _elm_lang$core$Time$millisecond,
-					function (_p5) {
+					function (_p6) {
 						return _user$project$Main$Fall;
 					}),
 				_1: {ctor: '[]'}
 			}
 		});
+};
+var _user$project$Main$Snap = function (a) {
+	return {ctor: 'Snap', _0: a};
 };
 var _user$project$Main$Sticky = function (a) {
 	return {ctor: 'Sticky', _0: a};
@@ -9707,21 +9742,21 @@ var _user$project$Main$Sticky = function (a) {
 var _user$project$Main$Regular = {ctor: 'Regular'};
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Rotate':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Grid$rotatePiece(_p6._0),
+					_user$project$Grid$rotatePiece(_p7._0),
 					model);
 			case 'Move':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Grid$movePiece(_p6._0),
+					_user$project$Grid$movePiece(_p7._0),
 					model);
 			case 'Fall':
 				return A3(
@@ -9729,20 +9764,26 @@ var _user$project$Main$update = F2(
 					_user$project$Main$Sticky(_user$project$Main$getRandomPiece),
 					_user$project$Grid$movePiece(_user$project$Grid$Down),
 					model);
+			case 'Drop':
+				return A3(
+					_user$project$Main$tryTransform,
+					_user$project$Main$Snap(_user$project$Main$getRandomPiece),
+					_user$project$Grid$dropPiece(model.grid),
+					model);
 			case 'RandomPiece':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getRandomPiece};
 			default:
-				var _p7 = _p6._0;
-				if (_p7.ctor === 'Nothing') {
+				var _p8 = _p7._0;
+				if (_p8.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					var _p8 = _p7._0;
-					return A2(_user$project$Grid$canAcceptPiece, model.grid, _p8) ? {
+					var _p9 = _p8._0;
+					return A2(_user$project$Grid$canAcceptPiece, model.grid, _p9) ? {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								piece: _elm_lang$core$Maybe$Just(_p8)
+								piece: _elm_lang$core$Maybe$Just(_p9)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					} : {
