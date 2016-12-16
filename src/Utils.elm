@@ -1,58 +1,39 @@
-module Grid exposing (..)
+module Utils exposing (..)
 
 
 import Array exposing (Array)
 
 
-
-gridWidth : Int
-gridWidth = 10
-
-
-gridHeight : Int
-gridHeight = 22
+import Constants exposing (..)
+import Types exposing (..)
 
 
-nextLevel : Int
-nextLevel = 2^gridWidth
 
+toBinaryRow : Int -> Row
+toBinaryRow score =
+  let
+    toBinaryList rest =
+      if rest == 0 then
+        []
+      else if rest % 2 == 0 then
+        False :: toBinaryList (rest // 2)
+      else
+        True :: toBinaryList (rest // 2)
 
-type alias Row = Array Bool
-
-
-emptyRow : Row
-emptyRow = Array.repeat gridWidth False
+    raw =
+      toBinaryList score
+        |> List.reverse
+        |> Array.fromList
+    padding =
+      Array.repeat (gridWidth - (Array.length raw)) False
+  in
+    Array.append padding raw
 
 
 isRowFull : Row -> Bool
 isRowFull row =
   Array.foldr (&&) True row
 
-
-type alias Grid = Array Row
-
-
-emptyGrid : Grid
-emptyGrid = Array.repeat gridHeight emptyRow
-
-
-points : Int -> Int
-points numCleared =
-  case numCleared of
-    1 ->
-      8
-
-    2 ->
-      20
-
-    3 ->
-      60
-
-    4 ->
-      240
-
-    _ ->
-      0
 
 clearFullRows : Grid -> (Int, Grid)
 clearFullRows grid =
@@ -65,9 +46,6 @@ clearFullRows grid =
         (Array.repeat numCleared emptyRow)
         remaining
     )
-
-
-type alias Point = (Int, Int)
 
 
 canAcceptPoint : Grid -> Point -> Bool
@@ -93,38 +71,6 @@ acceptPoint (i, j) grid =
 
     Just row ->
       Array.set i (Array.set j True row) grid
-
-
-type alias Piece =
-  { origin : Point
-  , offsets : List Point
-  }
-
-
-pieces : Array Piece
-pieces =
-  let
-    piecesList =
-      List.map
-        (Piece (2, 4))
-        [ [ (-2, 0), (-1, 0), (0, 0), (1, 0) ] -- I
-        , [ (-1, 0), (0, 0), (1, 0), (1, 1) ] -- L
-        , [ (-1, 1), (0, 1), (1, 1), (1, 0) ] -- J
-        , [ (-1, 0), (-1, 1), (0, 0), (0, 1) ] -- O
-        , [ (-1, 0), (0, 0), (0, 1), (1, 0) ] -- T
-        , [ (-1, 0), (0, 0), (0, 1), (1, 1) ] -- S
-        , [ (-1, 1), (0, 0), (0, 1), (1, 0) ] -- Z
-        ]
-  in
-    Array.fromList piecesList
-
-
-type Direction = Down | Left | Right
-
-
-add : Point -> Point -> Point
-add (i1, j1) (i2, j2) =
-  (i1 + i2, j1 + j2)
 
 
 movePiece : Direction -> Piece -> Piece
@@ -168,9 +114,6 @@ canAcceptPiece grid piece =
 acceptPiece : Grid -> Piece -> Grid
 acceptPiece grid piece =
   List.foldr acceptPoint grid (renderPiece piece)
-
-
-type Rotation = CW | CCW
 
 
 rotatePoint : Rotation -> Point -> Point

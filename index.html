@@ -9245,160 +9245,25 @@ var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$att
 var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
-var _user$project$Grid$rotatePoint = F2(
-	function (rotation, _p0) {
-		var _p1 = _p0;
-		var _p4 = _p1._1;
-		var _p3 = _p1._0;
-		var _p2 = rotation;
-		if (_p2.ctor === 'CW') {
-			return {ctor: '_Tuple2', _0: _p4, _1: 0 - _p3};
-		} else {
-			return {ctor: '_Tuple2', _0: 0 - _p4, _1: _p3};
-		}
+var _user$project$Types$add = F2(
+	function (_p1, _p0) {
+		var _p2 = _p1;
+		var _p3 = _p0;
+		return {ctor: '_Tuple2', _0: _p2._0 + _p3._0, _1: _p2._1 + _p3._1};
 	});
-var _user$project$Grid$rotatePiece = F2(
-	function (rotation, piece) {
-		return _elm_lang$core$Native_Utils.update(
-			piece,
-			{
-				offsets: A2(
-					_elm_lang$core$List$map,
-					_user$project$Grid$rotatePoint(rotation),
-					piece.offsets)
-			});
-	});
-var _user$project$Grid$add = F2(
-	function (_p6, _p5) {
-		var _p7 = _p6;
-		var _p8 = _p5;
-		return {ctor: '_Tuple2', _0: _p7._0 + _p8._0, _1: _p7._1 + _p8._1};
-	});
-var _user$project$Grid$movePiece = F2(
-	function (direction, piece) {
-		var delta = function () {
-			var _p9 = direction;
-			switch (_p9.ctor) {
-				case 'Down':
-					return {ctor: '_Tuple2', _0: 1, _1: 0};
-				case 'Left':
-					return {ctor: '_Tuple2', _0: 0, _1: -1};
-				default:
-					return {ctor: '_Tuple2', _0: 0, _1: 1};
-			}
-		}();
-		return _elm_lang$core$Native_Utils.update(
-			piece,
-			{
-				origin: A2(_user$project$Grid$add, delta, piece.origin)
-			});
-	});
-var _user$project$Grid$renderPiece = function (piece) {
-	return A2(
-		_elm_lang$core$List$map,
-		_user$project$Grid$add(piece.origin),
-		piece.offsets);
-};
-var _user$project$Grid$acceptPoint = F2(
-	function (_p10, grid) {
-		var _p11 = _p10;
-		var _p13 = _p11._0;
-		var _p12 = A2(_elm_lang$core$Array$get, _p13, grid);
-		if (_p12.ctor === 'Nothing') {
-			return grid;
-		} else {
-			return A3(
-				_elm_lang$core$Array$set,
-				_p13,
-				A3(_elm_lang$core$Array$set, _p11._1, true, _p12._0),
-				grid);
-		}
-	});
-var _user$project$Grid$acceptPiece = F2(
-	function (grid, piece) {
-		return A3(
-			_elm_lang$core$List$foldr,
-			_user$project$Grid$acceptPoint,
-			grid,
-			_user$project$Grid$renderPiece(piece));
-	});
-var _user$project$Grid$canAcceptPoint = F2(
-	function (grid, _p14) {
-		var _p15 = _p14;
-		var _p16 = A2(_elm_lang$core$Array$get, _p15._0, grid);
-		if (_p16.ctor === 'Nothing') {
-			return false;
-		} else {
-			var _p17 = A2(_elm_lang$core$Array$get, _p15._1, _p16._0);
-			if (_p17.ctor === 'Nothing') {
-				return false;
-			} else {
-				return !_p17._0;
-			}
-		}
-	});
-var _user$project$Grid$canAcceptPiece = F2(
-	function (grid, piece) {
-		return A2(
-			_elm_lang$core$List$all,
-			_user$project$Grid$canAcceptPoint(grid),
-			_user$project$Grid$renderPiece(piece));
-	});
-var _user$project$Grid$points = function (numCleared) {
-	var _p18 = numCleared;
-	switch (_p18) {
-		case 1:
-			return 8;
-		case 2:
-			return 20;
-		case 3:
-			return 60;
-		case 4:
-			return 240;
-		default:
-			return 0;
-	}
-};
-var _user$project$Grid$isRowFull = function (row) {
-	return A3(
-		_elm_lang$core$Array$foldr,
-		F2(
-			function (x, y) {
-				return x && y;
-			}),
-		true,
-		row);
-};
-var _user$project$Grid$gridHeight = 22;
-var _user$project$Grid$gridWidth = 10;
-var _user$project$Grid$nextLevel = Math.pow(2, _user$project$Grid$gridWidth);
-var _user$project$Grid$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Grid$gridWidth, false);
-var _user$project$Grid$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Grid$gridHeight, _user$project$Grid$emptyRow);
-var _user$project$Grid$clearFullRows = function (grid) {
-	var remaining = A2(
-		_elm_lang$core$Array$filter,
-		function (_p19) {
-			return !_user$project$Grid$isRowFull(_p19);
-		},
-		grid);
-	var numCleared = _user$project$Grid$gridHeight - _elm_lang$core$Array$length(remaining);
-	return {
-		ctor: '_Tuple2',
-		_0: _user$project$Grid$points(numCleared),
-		_1: A2(
-			_elm_lang$core$Array$append,
-			A2(_elm_lang$core$Array$repeat, numCleared, _user$project$Grid$emptyRow),
-			remaining)
-	};
-};
-var _user$project$Grid$Piece = F2(
+var _user$project$Types$Piece = F2(
 	function (a, b) {
 		return {origin: a, offsets: b};
 	});
-var _user$project$Grid$pieces = function () {
+var _user$project$Types$Right = {ctor: 'Right'};
+var _user$project$Types$Left = {ctor: 'Left'};
+var _user$project$Types$Down = {ctor: 'Down'};
+var _user$project$Types$CCW = {ctor: 'CCW'};
+var _user$project$Types$CW = {ctor: 'CW'};
+var _user$project$Constants$pieces = function () {
 	var piecesList = A2(
 		_elm_lang$core$List$map,
-		_user$project$Grid$Piece(
+		_user$project$Types$Piece(
 			{ctor: '_Tuple2', _0: 2, _1: 4}),
 		{
 			ctor: '::',
@@ -9543,53 +9408,188 @@ var _user$project$Grid$pieces = function () {
 		});
 	return _elm_lang$core$Array$fromList(piecesList);
 }();
-var _user$project$Grid$Right = {ctor: 'Right'};
-var _user$project$Grid$Left = {ctor: 'Left'};
-var _user$project$Grid$Down = {ctor: 'Down'};
-var _user$project$Grid$dropPiece = F2(
+var _user$project$Constants$points = function (numCleared) {
+	var _p0 = numCleared;
+	switch (_p0) {
+		case 1:
+			return 8;
+		case 2:
+			return 20;
+		case 3:
+			return 60;
+		case 4:
+			return 240;
+		default:
+			return 0;
+	}
+};
+var _user$project$Constants$gridHeight = 22;
+var _user$project$Constants$gridWidth = 10;
+var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, false);
+var _user$project$Constants$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridHeight, _user$project$Constants$emptyRow);
+var _user$project$Constants$nextLevel = Math.pow(2, _user$project$Constants$gridWidth);
+var _user$project$Utils$rotatePoint = F2(
+	function (rotation, _p0) {
+		var _p1 = _p0;
+		var _p4 = _p1._1;
+		var _p3 = _p1._0;
+		var _p2 = rotation;
+		if (_p2.ctor === 'CW') {
+			return {ctor: '_Tuple2', _0: _p4, _1: 0 - _p3};
+		} else {
+			return {ctor: '_Tuple2', _0: 0 - _p4, _1: _p3};
+		}
+	});
+var _user$project$Utils$rotatePiece = F2(
+	function (rotation, piece) {
+		return _elm_lang$core$Native_Utils.update(
+			piece,
+			{
+				offsets: A2(
+					_elm_lang$core$List$map,
+					_user$project$Utils$rotatePoint(rotation),
+					piece.offsets)
+			});
+	});
+var _user$project$Utils$renderPiece = function (piece) {
+	return A2(
+		_elm_lang$core$List$map,
+		_user$project$Types$add(piece.origin),
+		piece.offsets);
+};
+var _user$project$Utils$movePiece = F2(
+	function (direction, piece) {
+		var delta = function () {
+			var _p5 = direction;
+			switch (_p5.ctor) {
+				case 'Down':
+					return {ctor: '_Tuple2', _0: 1, _1: 0};
+				case 'Left':
+					return {ctor: '_Tuple2', _0: 0, _1: -1};
+				default:
+					return {ctor: '_Tuple2', _0: 0, _1: 1};
+			}
+		}();
+		return _elm_lang$core$Native_Utils.update(
+			piece,
+			{
+				origin: A2(_user$project$Types$add, delta, piece.origin)
+			});
+	});
+var _user$project$Utils$acceptPoint = F2(
+	function (_p6, grid) {
+		var _p7 = _p6;
+		var _p9 = _p7._0;
+		var _p8 = A2(_elm_lang$core$Array$get, _p9, grid);
+		if (_p8.ctor === 'Nothing') {
+			return grid;
+		} else {
+			return A3(
+				_elm_lang$core$Array$set,
+				_p9,
+				A3(_elm_lang$core$Array$set, _p7._1, true, _p8._0),
+				grid);
+		}
+	});
+var _user$project$Utils$acceptPiece = F2(
+	function (grid, piece) {
+		return A3(
+			_elm_lang$core$List$foldr,
+			_user$project$Utils$acceptPoint,
+			grid,
+			_user$project$Utils$renderPiece(piece));
+	});
+var _user$project$Utils$canAcceptPoint = F2(
+	function (grid, _p10) {
+		var _p11 = _p10;
+		var _p12 = A2(_elm_lang$core$Array$get, _p11._0, grid);
+		if (_p12.ctor === 'Nothing') {
+			return false;
+		} else {
+			var _p13 = A2(_elm_lang$core$Array$get, _p11._1, _p12._0);
+			if (_p13.ctor === 'Nothing') {
+				return false;
+			} else {
+				return !_p13._0;
+			}
+		}
+	});
+var _user$project$Utils$canAcceptPiece = F2(
+	function (grid, piece) {
+		return A2(
+			_elm_lang$core$List$all,
+			_user$project$Utils$canAcceptPoint(grid),
+			_user$project$Utils$renderPiece(piece));
+	});
+var _user$project$Utils$dropPiece = F2(
 	function (grid, piece) {
 		dropPiece:
 		while (true) {
-			var step = A2(_user$project$Grid$movePiece, _user$project$Grid$Down, piece);
-			if (A2(_user$project$Grid$canAcceptPiece, grid, step)) {
-				var _v11 = grid,
-					_v12 = step;
-				grid = _v11;
-				piece = _v12;
+			var step = A2(_user$project$Utils$movePiece, _user$project$Types$Down, piece);
+			if (A2(_user$project$Utils$canAcceptPiece, grid, step)) {
+				var _v8 = grid,
+					_v9 = step;
+				grid = _v8;
+				piece = _v9;
 				continue dropPiece;
 			} else {
 				return piece;
 			}
 		}
 	});
-var _user$project$Grid$CCW = {ctor: 'CCW'};
-var _user$project$Grid$CW = {ctor: 'CW'};
-var _user$project$Main$toBinaryList = function (score) {
-	return _elm_lang$core$Native_Utils.eq(score, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
-		A2(_elm_lang$core$Basics_ops['%'], score, 2),
-		0) ? {
-		ctor: '::',
-		_0: false,
-		_1: _user$project$Main$toBinaryList((score / 2) | 0)
-	} : {
-		ctor: '::',
-		_0: true,
-		_1: _user$project$Main$toBinaryList((score / 2) | 0)
-	});
+var _user$project$Utils$isRowFull = function (row) {
+	return A3(
+		_elm_lang$core$Array$foldr,
+		F2(
+			function (x, y) {
+				return x && y;
+			}),
+		true,
+		row);
 };
-var _user$project$Main$toBinary = function (score) {
+var _user$project$Utils$clearFullRows = function (grid) {
+	var remaining = A2(
+		_elm_lang$core$Array$filter,
+		function (_p14) {
+			return !_user$project$Utils$isRowFull(_p14);
+		},
+		grid);
+	var numCleared = _user$project$Constants$gridHeight - _elm_lang$core$Array$length(remaining);
+	return {
+		ctor: '_Tuple2',
+		_0: _user$project$Constants$points(numCleared),
+		_1: A2(
+			_elm_lang$core$Array$append,
+			A2(_elm_lang$core$Array$repeat, numCleared, _user$project$Constants$emptyRow),
+			remaining)
+	};
+};
+var _user$project$Utils$toBinaryRow = function (score) {
+	var toBinaryList = function (rest) {
+		return _elm_lang$core$Native_Utils.eq(rest, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
+			A2(_elm_lang$core$Basics_ops['%'], rest, 2),
+			0) ? {
+			ctor: '::',
+			_0: false,
+			_1: toBinaryList((rest / 2) | 0)
+		} : {
+			ctor: '::',
+			_0: true,
+			_1: toBinaryList((rest / 2) | 0)
+		});
+	};
 	var raw = _elm_lang$core$Array$fromList(
 		_elm_lang$core$List$reverse(
-			_user$project$Main$toBinaryList(score)));
+			toBinaryList(score)));
 	var padding = A2(
 		_elm_lang$core$Array$repeat,
-		_user$project$Grid$gridWidth - _elm_lang$core$Array$length(raw),
+		_user$project$Constants$gridWidth - _elm_lang$core$Array$length(raw),
 		false);
 	return A2(_elm_lang$core$Array$append, padding, raw);
 };
-var _user$project$Main$renderGrid = F2(
+var _user$project$Main$gridView = F2(
 	function (grid, score) {
-		var renderCell = F5(
+		var cellView = F5(
 			function (on, off, i, j, cell) {
 				return A2(
 					_elm_lang$svg$Svg$rect,
@@ -9619,20 +9619,20 @@ var _user$project$Main$renderGrid = F2(
 					},
 					{ctor: '[]'});
 			});
-		var renderRow = F4(
+		var rowView = F4(
 			function (on, off, i, row) {
 				return _elm_lang$core$Array$toList(
 					A2(
 						_elm_lang$core$Array$indexedMap,
-						A3(renderCell, on, off, i),
+						A3(cellView, on, off, i),
 						row));
 			});
-		var scoreRow = A4(
-			renderRow,
+		var scoreView = A4(
+			rowView,
 			'#EEEEEE',
 			'#AAAAAA',
 			-1,
-			_user$project$Main$toBinary(score));
+			_user$project$Utils$toBinaryRow(score));
 		return A2(
 			_elm_lang$svg$Svg$svg,
 			{
@@ -9654,21 +9654,21 @@ var _user$project$Main$renderGrid = F2(
 						function (x, y) {
 							return {ctor: '::', _0: x, _1: y};
 						}),
-					scoreRow,
+					scoreView,
 					_elm_lang$core$Array$toList(
 						A2(
 							_elm_lang$core$Array$indexedMap,
-							A2(renderRow, '#CCCCCC', '#666666'),
+							A2(rowView, '#CCCCCC', '#666666'),
 							grid)))));
 	});
 var _user$project$Main$view = function (model) {
 	var _p0 = model.piece;
 	if (_p0.ctor === 'Nothing') {
-		return A2(_user$project$Main$renderGrid, model.grid, model.score);
+		return A2(_user$project$Main$gridView, model.grid, model.score);
 	} else {
 		return A2(
-			_user$project$Main$renderGrid,
-			A2(_user$project$Grid$acceptPiece, model.grid, _p0._0),
+			_user$project$Main$gridView,
+			A2(_user$project$Utils$acceptPiece, model.grid, _p0._0),
 			model.score);
 	}
 };
@@ -9680,16 +9680,16 @@ var _user$project$Main$tryTransform = F3(
 		} else {
 			var _p7 = _p1._0;
 			var transformed = transform(_p7);
-			if (A2(_user$project$Grid$canAcceptPiece, model.grid, transformed)) {
+			if (A2(_user$project$Utils$canAcceptPiece, model.grid, transformed)) {
 				var _p2 = kind;
 				if (_p2.ctor === 'Snap') {
 					var _p4 = _p2._0;
-					var _p3 = _user$project$Grid$clearFullRows(
-						A2(_user$project$Grid$acceptPiece, model.grid, transformed));
+					var _p3 = _user$project$Utils$clearFullRows(
+						A2(_user$project$Utils$acceptPiece, model.grid, transformed));
 					var scoreDelta = _p3._0;
 					var cleared = _p3._1;
 					var score = model.score + scoreDelta;
-					return (_elm_lang$core$Native_Utils.cmp(score, _user$project$Grid$nextLevel) > -1) ? {
+					return (_elm_lang$core$Native_Utils.cmp(score, _user$project$Constants$nextLevel) > -1) ? {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
@@ -9716,8 +9716,8 @@ var _user$project$Main$tryTransform = F3(
 			} else {
 				var _p5 = kind;
 				if (_p5.ctor === 'Sticky') {
-					var _p6 = _user$project$Grid$clearFullRows(
-						A2(_user$project$Grid$acceptPiece, model.grid, _p7));
+					var _p6 = _user$project$Utils$clearFullRows(
+						A2(_user$project$Utils$acceptPiece, model.grid, _p7));
 					var scoreDelta = _p6._0;
 					var cleared = _p6._1;
 					return {
@@ -9744,18 +9744,18 @@ var _user$project$Main$getRandomPiece = function () {
 	var index = A2(
 		_elm_lang$core$Random$int,
 		0,
-		_elm_lang$core$Array$length(_user$project$Grid$pieces) - 1);
+		_elm_lang$core$Array$length(_user$project$Constants$pieces) - 1);
 	var maybePiece = A2(
 		_elm_lang$core$Random$map,
 		function (i) {
-			return A2(_elm_lang$core$Array$get, i, _user$project$Grid$pieces);
+			return A2(_elm_lang$core$Array$get, i, _user$project$Constants$pieces);
 		},
 		index);
 	return A2(_elm_lang$core$Random$generate, _user$project$Main$AddPiece, maybePiece);
 }();
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Grid$emptyGrid, score: 0, level: 0, gameOver: false},
+	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, level: 0, gameOver: false},
 	_1: _user$project$Main$getRandomPiece
 };
 var _user$project$Main$RandomPiece = {ctor: 'RandomPiece'};
@@ -9774,13 +9774,13 @@ var _user$project$Main$handleKeyboardInput = function (keyCode) {
 		case 32:
 			return _user$project$Main$Drop;
 		case 38:
-			return _user$project$Main$Rotate(_user$project$Grid$CW);
+			return _user$project$Main$Rotate(_user$project$Types$CW);
 		case 40:
 			return _user$project$Main$Fall;
 		case 37:
-			return _user$project$Main$Move(_user$project$Grid$Left);
+			return _user$project$Main$Move(_user$project$Types$Left);
 		case 39:
-			return _user$project$Main$Move(_user$project$Grid$Right);
+			return _user$project$Main$Move(_user$project$Types$Right);
 		default:
 			return _user$project$Main$NoOp;
 	}
@@ -9833,25 +9833,25 @@ var _user$project$Main$update = F2(
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Grid$rotatePiece(_p10._0),
+					_user$project$Utils$rotatePiece(_p10._0),
 					model);
 			case 'Move':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Grid$movePiece(_p10._0),
+					_user$project$Utils$movePiece(_p10._0),
 					model);
 			case 'Fall':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Sticky(_user$project$Main$getRandomPiece),
-					_user$project$Grid$movePiece(_user$project$Grid$Down),
+					_user$project$Utils$movePiece(_user$project$Types$Down),
 					model);
 			case 'Drop':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Snap(_user$project$Main$getRandomPiece),
-					_user$project$Grid$dropPiece(model.grid),
+					_user$project$Utils$dropPiece(model.grid),
 					model);
 			case 'RandomPiece':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getRandomPiece};
@@ -9861,7 +9861,7 @@ var _user$project$Main$update = F2(
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
 					var _p12 = _p11._0;
-					return A2(_user$project$Grid$canAcceptPiece, model.grid, _p12) ? {
+					return A2(_user$project$Utils$canAcceptPiece, model.grid, _p12) ? {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,

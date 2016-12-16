@@ -8,7 +8,9 @@ import Task
 import Time exposing (millisecond)
 
 
-import Grid exposing (..)
+import Constants exposing (..)
+import Types exposing (..)
+import Utils exposing (..)
 
 
 
@@ -230,39 +232,16 @@ view : Model -> Html Msg
 view model =
   case model.piece of
     Nothing ->
-      renderGrid model.grid model.score
+      gridView model.grid model.score
 
     Just piece ->
-      renderGrid (acceptPiece model.grid piece) model.score
+      gridView (acceptPiece model.grid piece) model.score
 
 
-toBinaryList : Int -> List Bool
-toBinaryList score =
-  if score == 0 then
-    []
-  else if score % 2 == 0 then
-    False :: toBinaryList (score // 2)
-  else
-    True :: toBinaryList (score // 2)
-
-
-toBinary : Int -> Row
-toBinary score =
+gridView : Grid -> Int -> Html Msg
+gridView grid score =
   let
-    raw =
-      toBinaryList score
-        |> List.reverse
-        |> Array.fromList
-    padding =
-      Array.repeat (gridWidth - (Array.length raw)) False
-  in
-    Array.append padding raw
-
-
-renderGrid : Grid -> Int -> Html Msg
-renderGrid grid score =
-  let
-    renderCell on off i j cell =
+    cellView on off i j cell =
       rect
         [ width "18"
         , height "18"
@@ -272,16 +251,16 @@ renderGrid grid score =
         ]
         []
 
-    renderRow on off i row =
-      Array.indexedMap (renderCell on off i) row
+    rowView on off i row =
+      Array.indexedMap (cellView on off i) row
         |> Array.toList
 
-    scoreRow =
-      toBinary score
-        |> renderRow "#EEEEEE" "#AAAAAA" -1
+    scoreView =
+      toBinaryRow score
+        |> rowView "#EEEEEE" "#AAAAAA" -1
   in
-    Array.indexedMap (renderRow "#CCCCCC" "#666666") grid
+    Array.indexedMap (rowView "#CCCCCC" "#666666") grid
       |> Array.toList
-      |> (::) scoreRow
+      |> (::) scoreView
       |> List.concat
       |> svg [ viewBox "0 0 240 500", width "240px", height "500" ]
