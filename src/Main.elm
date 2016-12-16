@@ -245,7 +245,7 @@ gridView grid score =
       rect
         [ width "18"
         , height "18"
-        , (i + 2) * 20 |> toString |> y
+        , (i + 1) * 20 |> toString |> y
         , (j + 1) * 20 |> toString |> x
         , fill (if cell then off else on)
         ]
@@ -257,9 +257,10 @@ gridView grid score =
 
     scoreView =
       toBinaryRow score
-        |> rowView "#EEEEEE" "#AAAAAA" -1
+        |> rowView "#EEEEEE" "#AAAAAA" (gridHeight - 2)
   in
-    Array.indexedMap (rowView "#CCCCCC" "#666666") grid
+    Array.slice 2 gridHeight grid
+      |> Array.indexedMap (rowView "#CCCCCC" "#666666")
       |> Array.toList
       |> (::) scoreView
       |> List.concat
