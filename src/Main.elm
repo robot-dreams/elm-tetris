@@ -74,6 +74,33 @@ type Kind
   | Snap (Cmd Msg)
 
 
+tryLevelUp : Model -> Model
+tryLevelUp model =
+  if model.score >= nextLevel then
+    tryLevelUp
+      { model
+        | score = model.score - nextLevel
+        , level = model.level + 1
+      }
+  else
+    model
+
+
+acceptAndHandle : Model -> Piece -> Model
+acceptAndHandle model piece =
+  let
+    (scoreDelta, newGrid) =
+      acceptPiece model.grid piece
+        |> clearFullRows
+  in
+    tryLevelUp
+      { model
+        | grid = newGrid
+        , piece = Nothing
+        , score = model.score + scoreDelta
+      }
+
+
 tryTransform : Kind -> (Piece -> Piece) -> Model -> (Model, Cmd Msg)
 tryTransform kind transform model =
   case model.piece of
@@ -87,28 +114,9 @@ tryTransform kind transform model =
         if canAcceptPiece model.grid transformed then
           case kind of
             Snap cmd ->
-              let
-                (scoreDelta, cleared) =
-                  acceptPiece model.grid transformed |> clearFullRows
-                score = model.score + scoreDelta
-              in
-                if score >= nextLevel then
-                  ( { model
-                      | grid = cleared
-                      , piece = Nothing
-                      , level = model.level + 1
-                      , score = 0
-                    }
-                  , cmd
-                  )
-                else
-                  ( { model
-                      | grid = cleared
-                      , piece = Nothing
-                      , score = model.score + scoreDelta
-                    }
-                  , cmd
-                  )
+              ( acceptAndHandle model transformed
+              , cmd
+              )
 
             _ ->
               ( { model | piece = Just transformed }
@@ -117,17 +125,9 @@ tryTransform kind transform model =
         else
           case kind of
             Sticky cmd ->
-              let
-                (scoreDelta, cleared) =
-                  acceptPiece model.grid piece |> clearFullRows
-              in
-                ( { model
-                    | grid = cleared
-                    , piece = Nothing
-                    , score = model.score + scoreDelta
-                  }
-                , cmd
-                )
+              ( acceptAndHandle model piece
+              , cmd
+              )
 
             _ ->
               (model, Cmd.none)
