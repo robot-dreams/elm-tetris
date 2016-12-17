@@ -9251,18 +9251,18 @@ var _user$project$Types$add = F2(
 		var _p3 = _p0;
 		return {ctor: '_Tuple2', _0: _p2._0 + _p3._0, _1: _p2._1 + _p3._1};
 	});
-var _user$project$Types$Piece = F2(
-	function (a, b) {
-		return {origin: a, offsets: b};
+var _user$project$Types$Piece = F3(
+	function (a, b, c) {
+		return {origin: a, offsets: b, color: c};
 	});
 var _user$project$Types$Right = {ctor: 'Right'};
 var _user$project$Types$Left = {ctor: 'Left'};
 var _user$project$Types$Down = {ctor: 'Down'};
 var _user$project$Types$CCW = {ctor: 'CCW'};
 var _user$project$Types$CW = {ctor: 'CW'};
-var _user$project$Constants$pieces = function () {
-	var piecesList = A2(
-		_elm_lang$core$List$map,
+var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
+	A3(
+		_elm_lang$core$List$map2,
 		_user$project$Types$Piece(
 			{ctor: '_Tuple2', _0: 2, _1: 4}),
 		{
@@ -9288,16 +9288,16 @@ var _user$project$Constants$pieces = function () {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: -1, _1: 0},
+					_0: {ctor: '_Tuple2', _0: -1, _1: 1},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+						_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+							_0: {ctor: '_Tuple2', _0: 1, _1: 1},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 1, _1: 1},
+								_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9307,16 +9307,16 @@ var _user$project$Constants$pieces = function () {
 					ctor: '::',
 					_0: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: -1, _1: 1},
+						_0: {ctor: '_Tuple2', _0: -1, _1: 0},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 0, _1: 1},
+							_0: {ctor: '_Tuple2', _0: 0, _1: 0},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 1, _1: 1},
+								_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+									_0: {ctor: '_Tuple2', _0: 1, _1: 1},
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9354,7 +9354,7 @@ var _user$project$Constants$pieces = function () {
 										_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+											_0: {ctor: '_Tuple2', _0: 1, _1: 1},
 											_1: {ctor: '[]'}
 										}
 									}
@@ -9373,7 +9373,7 @@ var _user$project$Constants$pieces = function () {
 											_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 1, _1: 1},
+												_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 												_1: {ctor: '[]'}
 											}
 										}
@@ -9405,9 +9405,36 @@ var _user$project$Constants$pieces = function () {
 					}
 				}
 			}
-		});
-	return _elm_lang$core$Array$fromList(piecesList);
-}();
+		},
+		{
+			ctor: '::',
+			_0: '#3399CC',
+			_1: {
+				ctor: '::',
+				_0: '#CC33CC',
+				_1: {
+					ctor: '::',
+					_0: '#CC3366',
+					_1: {
+						ctor: '::',
+						_0: '#888888',
+						_1: {
+							ctor: '::',
+							_0: '#66CC33',
+							_1: {
+								ctor: '::',
+								_0: '#CC9900',
+								_1: {
+									ctor: '::',
+									_0: '#CC3333',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		}));
 var _user$project$Constants$points = function (numCleared) {
 	var _p0 = numCleared;
 	switch (_p0) {
@@ -9425,32 +9452,33 @@ var _user$project$Constants$points = function (numCleared) {
 };
 var _user$project$Constants$gridHeight = 22;
 var _user$project$Constants$gridWidth = 10;
-var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, false);
+var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, _elm_lang$core$Maybe$Nothing);
 var _user$project$Constants$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridHeight, _user$project$Constants$emptyRow);
 var _user$project$Constants$nextLevel = Math.pow(2, _user$project$Constants$gridWidth);
-var _user$project$Utils$toBinaryRow = function (score) {
-	var toBinaryList = function (rest) {
-		return _elm_lang$core$Native_Utils.eq(rest, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
-			A2(_elm_lang$core$Basics_ops['%'], rest, 2),
-			0) ? {
-			ctor: '::',
-			_0: false,
-			_1: toBinaryList((rest / 2) | 0)
-		} : {
-			ctor: '::',
-			_0: true,
-			_1: toBinaryList((rest / 2) | 0)
-		});
-	};
-	var raw = _elm_lang$core$Array$fromList(
-		_elm_lang$core$List$reverse(
-			toBinaryList(score)));
-	var padding = A2(
-		_elm_lang$core$Array$repeat,
-		_user$project$Constants$gridWidth - _elm_lang$core$Array$length(raw),
-		false);
-	return A2(_elm_lang$core$Array$append, padding, raw);
-};
+var _user$project$Utils$toBinaryRow = F2(
+	function (color, score) {
+		var toBinaryList = function (rest) {
+			return _elm_lang$core$Native_Utils.eq(rest, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
+				A2(_elm_lang$core$Basics_ops['%'], rest, 2),
+				0) ? {
+				ctor: '::',
+				_0: _elm_lang$core$Maybe$Nothing,
+				_1: toBinaryList((rest / 2) | 0)
+			} : {
+				ctor: '::',
+				_0: _elm_lang$core$Maybe$Just(color),
+				_1: toBinaryList((rest / 2) | 0)
+			});
+		};
+		var raw = _elm_lang$core$Array$fromList(
+			_elm_lang$core$List$reverse(
+				toBinaryList(score)));
+		var padding = A2(
+			_elm_lang$core$Array$repeat,
+			_user$project$Constants$gridWidth - _elm_lang$core$Array$length(raw),
+			_elm_lang$core$Maybe$Nothing);
+		return A2(_elm_lang$core$Array$append, padding, raw);
+	});
 var _user$project$Utils$rotatePoint = F2(
 	function (rotation, _p0) {
 		var _p1 = _p0;
@@ -9499,8 +9527,8 @@ var _user$project$Utils$movePiece = F2(
 				origin: A2(_user$project$Types$add, delta, piece.origin)
 			});
 	});
-var _user$project$Utils$acceptPoint = F2(
-	function (_p6, grid) {
+var _user$project$Utils$acceptPoint = F3(
+	function (color, _p6, grid) {
 		var _p7 = _p6;
 		var _p9 = _p7._0;
 		var _p8 = A2(_elm_lang$core$Array$get, _p9, grid);
@@ -9510,7 +9538,11 @@ var _user$project$Utils$acceptPoint = F2(
 			return A3(
 				_elm_lang$core$Array$set,
 				_p9,
-				A3(_elm_lang$core$Array$set, _p7._1, true, _p8._0),
+				A3(
+					_elm_lang$core$Array$set,
+					_p7._1,
+					_elm_lang$core$Maybe$Just(color),
+					_p8._0),
 				grid);
 		}
 	});
@@ -9518,7 +9550,7 @@ var _user$project$Utils$acceptPiece = F2(
 	function (grid, piece) {
 		return A3(
 			_elm_lang$core$List$foldr,
-			_user$project$Utils$acceptPoint,
+			_user$project$Utils$acceptPoint(piece.color),
 			grid,
 			_user$project$Utils$renderPiece(piece));
 	});
@@ -9533,7 +9565,7 @@ var _user$project$Utils$canAcceptPoint = F2(
 			if (_p13.ctor === 'Nothing') {
 				return false;
 			} else {
-				return !_p13._0;
+				return _elm_lang$core$Native_Utils.eq(_p13._0, _elm_lang$core$Maybe$Nothing);
 			}
 		}
 	});
@@ -9563,18 +9595,27 @@ var _user$project$Utils$dropPiece = F2(
 var _user$project$Utils$isRowFull = function (row) {
 	return A3(
 		_elm_lang$core$Array$foldr,
-		F2(
-			function (x, y) {
-				return x && y;
-			}),
+		function (_p14) {
+			return F2(
+				function (x, y) {
+					return x && y;
+				})(
+				A2(
+					F2(
+						function (x, y) {
+							return !_elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					_elm_lang$core$Maybe$Nothing,
+					_p14));
+		},
 		true,
 		row);
 };
 var _user$project$Utils$clearFullRows = function (grid) {
 	var remaining = A2(
 		_elm_lang$core$Array$filter,
-		function (_p14) {
-			return !_user$project$Utils$isRowFull(_p14);
+		function (_p15) {
+			return !_user$project$Utils$isRowFull(_p15);
 		},
 		grid);
 	var numCleared = _user$project$Constants$gridHeight - _elm_lang$core$Array$length(remaining);
@@ -9589,8 +9630,16 @@ var _user$project$Utils$clearFullRows = function (grid) {
 };
 var _user$project$Main$gridView = F2(
 	function (grid, score) {
-		var cellView = F5(
-			function (on, off, i, j, cell) {
+		var cellView = F4(
+			function (off, i, j, cell) {
+				var color = function () {
+					var _p0 = cell;
+					if (_p0.ctor === 'Nothing') {
+						return off;
+					} else {
+						return _p0._0;
+					}
+				}();
 				return A2(
 					_elm_lang$svg$Svg$rect,
 					{
@@ -9609,8 +9658,7 @@ var _user$project$Main$gridView = F2(
 										_elm_lang$core$Basics$toString((j + 1) * 20)),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$fill(
-											cell ? off : on),
+										_0: _elm_lang$svg$Svg_Attributes$fill(color),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -9619,20 +9667,19 @@ var _user$project$Main$gridView = F2(
 					},
 					{ctor: '[]'});
 			});
-		var rowView = F4(
-			function (on, off, i, row) {
+		var rowView = F3(
+			function (off, i, row) {
 				return _elm_lang$core$Array$toList(
 					A2(
 						_elm_lang$core$Array$indexedMap,
-						A3(cellView, on, off, i),
+						A2(cellView, off, i),
 						row));
 			});
-		var scoreView = A4(
+		var scoreView = A3(
 			rowView,
 			'#EEEEEE',
-			'#AAAAAA',
 			_user$project$Constants$gridHeight - 2,
-			_user$project$Utils$toBinaryRow(score));
+			A2(_user$project$Utils$toBinaryRow, '#AAAAAA', score));
 		return A2(
 			_elm_lang$svg$Svg$svg,
 			{
@@ -9658,17 +9705,17 @@ var _user$project$Main$gridView = F2(
 					_elm_lang$core$Array$toList(
 						A2(
 							_elm_lang$core$Array$indexedMap,
-							A2(rowView, '#CCCCCC', '#666666'),
+							rowView('#DDDDDD'),
 							A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid))))));
 	});
 var _user$project$Main$view = function (model) {
-	var _p0 = model.piece;
-	if (_p0.ctor === 'Nothing') {
+	var _p1 = model.piece;
+	if (_p1.ctor === 'Nothing') {
 		return A2(_user$project$Main$gridView, model.grid, model.score);
 	} else {
 		return A2(
 			_user$project$Main$gridView,
-			A2(_user$project$Utils$acceptPiece, model.grid, _p0._0),
+			A2(_user$project$Utils$acceptPiece, model.grid, _p1._0),
 			model.score);
 	}
 };
@@ -9676,10 +9723,10 @@ var _user$project$Main$tryLevelUp = function (model) {
 	tryLevelUp:
 	while (true) {
 		if (_elm_lang$core$Native_Utils.cmp(model.score, _user$project$Constants$nextLevel) > -1) {
-			var _v1 = _elm_lang$core$Native_Utils.update(
+			var _v2 = _elm_lang$core$Native_Utils.update(
 				model,
 				{score: model.score - _user$project$Constants$nextLevel, level: model.level + 1});
-			model = _v1;
+			model = _v2;
 			continue tryLevelUp;
 		} else {
 			return model;
@@ -9688,10 +9735,10 @@ var _user$project$Main$tryLevelUp = function (model) {
 };
 var _user$project$Main$acceptAndHandle = F2(
 	function (model, piece) {
-		var _p1 = _user$project$Utils$clearFullRows(
+		var _p2 = _user$project$Utils$clearFullRows(
 			A2(_user$project$Utils$acceptPiece, model.grid, piece));
-		var scoreDelta = _p1._0;
-		var newGrid = _p1._1;
+		var scoreDelta = _p2._0;
+		var newGrid = _p2._1;
 		return _user$project$Main$tryLevelUp(
 			_elm_lang$core$Native_Utils.update(
 				model,
@@ -9699,19 +9746,19 @@ var _user$project$Main$acceptAndHandle = F2(
 	});
 var _user$project$Main$tryTransform = F3(
 	function (kind, transform, model) {
-		var _p2 = model.piece;
-		if (_p2.ctor === 'Nothing') {
+		var _p3 = model.piece;
+		if (_p3.ctor === 'Nothing') {
 			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		} else {
-			var _p5 = _p2._0;
-			var transformed = transform(_p5);
+			var _p6 = _p3._0;
+			var transformed = transform(_p6);
 			if (A2(_user$project$Utils$canAcceptPiece, model.grid, transformed)) {
-				var _p3 = kind;
-				if (_p3.ctor === 'Snap') {
+				var _p4 = kind;
+				if (_p4.ctor === 'Snap') {
 					return {
 						ctor: '_Tuple2',
 						_0: A2(_user$project$Main$acceptAndHandle, model, transformed),
-						_1: _p3._0
+						_1: _p4._0
 					};
 				} else {
 					return {
@@ -9725,12 +9772,12 @@ var _user$project$Main$tryTransform = F3(
 					};
 				}
 			} else {
-				var _p4 = kind;
-				if (_p4.ctor === 'Sticky') {
+				var _p5 = kind;
+				if (_p5.ctor === 'Sticky') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Main$acceptAndHandle, model, _p5),
-						_1: _p4._0
+						_0: A2(_user$project$Main$acceptAndHandle, model, _p6),
+						_1: _p5._0
 					};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
@@ -9774,8 +9821,8 @@ var _user$project$Main$Rotate = function (a) {
 };
 var _user$project$Main$NoOp = {ctor: 'NoOp'};
 var _user$project$Main$handleKeyboardInput = function (keyCode) {
-	var _p6 = keyCode;
-	switch (_p6) {
+	var _p7 = keyCode;
+	switch (_p7) {
 		case 32:
 			return _user$project$Main$Drop;
 		case 38:
@@ -9813,7 +9860,7 @@ var _user$project$Main$subscriptions = function (model) {
 					_0: A2(
 						_elm_lang$core$Time$every,
 						freq,
-						function (_p7) {
+						function (_p8) {
 							return _user$project$Main$Fall;
 						}),
 					_1: {ctor: '[]'}
@@ -9830,21 +9877,21 @@ var _user$project$Main$Sticky = function (a) {
 var _user$project$Main$Regular = {ctor: 'Regular'};
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p8 = msg;
-		switch (_p8.ctor) {
+		var _p9 = msg;
+		switch (_p9.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Rotate':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Utils$rotatePiece(_p8._0),
+					_user$project$Utils$rotatePiece(_p9._0),
 					model);
 			case 'Move':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Utils$movePiece(_p8._0),
+					_user$project$Utils$movePiece(_p9._0),
 					model);
 			case 'Fall':
 				return A3(
@@ -9861,17 +9908,17 @@ var _user$project$Main$update = F2(
 			case 'RandomPiece':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getRandomPiece};
 			default:
-				var _p9 = _p8._0;
-				if (_p9.ctor === 'Nothing') {
+				var _p10 = _p9._0;
+				if (_p10.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					var _p10 = _p9._0;
-					return A2(_user$project$Utils$canAcceptPiece, model.grid, _p10) ? {
+					var _p11 = _p10._0;
+					return A2(_user$project$Utils$canAcceptPiece, model.grid, _p11) ? {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								piece: _elm_lang$core$Maybe$Just(_p10)
+								piece: _elm_lang$core$Maybe$Just(_p11)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					} : {

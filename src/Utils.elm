@@ -11,7 +11,7 @@ import Types exposing (..)
 
 isRowFull : Row -> Bool
 isRowFull row =
-  Array.foldr (&&) True row
+  Array.foldr ((&&) << (/=) Nothing) True row
 
 
 clearFullRows : Grid -> (Int, Grid)
@@ -38,18 +38,18 @@ canAcceptPoint grid (i, j) =
         Nothing ->
           False
 
-        Just occupied ->
-          not occupied
+        Just cell ->
+          cell == Nothing
 
 
-acceptPoint : Point -> Grid -> Grid
-acceptPoint (i, j) grid =
+acceptPoint : String -> Point -> Grid -> Grid
+acceptPoint color (i, j) grid =
   case Array.get i grid of
     Nothing ->
       grid
 
     Just row ->
-      Array.set i (Array.set j True row) grid
+      Array.set i (Array.set j (Just color) row) grid
 
 
 movePiece : Direction -> Piece -> Piece
@@ -92,7 +92,7 @@ canAcceptPiece grid piece =
 
 acceptPiece : Grid -> Piece -> Grid
 acceptPiece grid piece =
-  List.foldr acceptPoint grid (renderPiece piece)
+  List.foldr (acceptPoint piece.color) grid (renderPiece piece)
 
 
 rotatePoint : Rotation -> Point -> Point
@@ -114,22 +114,22 @@ rotatePiece rotation piece =
   { piece | offsets = List.map (rotatePoint rotation) piece.offsets }
 
 
-toBinaryRow : Int -> Row
-toBinaryRow score =
+toBinaryRow : String -> Int -> Row
+toBinaryRow color score =
   let
     toBinaryList rest =
       if rest == 0 then
         []
       else if rest % 2 == 0 then
-        False :: toBinaryList (rest // 2)
+        Nothing :: toBinaryList (rest // 2)
       else
-        True :: toBinaryList (rest // 2)
+        Just color :: toBinaryList (rest // 2)
 
     raw =
       toBinaryList score
         |> List.reverse
         |> Array.fromList
     padding =
-      Array.repeat (gridWidth - (Array.length raw)) False
+      Array.repeat (gridWidth - (Array.length raw)) Nothing
   in
     Array.append padding raw

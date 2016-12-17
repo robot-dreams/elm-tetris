@@ -241,26 +241,34 @@ view model =
 gridView : Grid -> Int -> Html Msg
 gridView grid score =
   let
-    cellView on off i j cell =
-      rect
-        [ width "18"
-        , height "18"
-        , (i + 1) * 20 |> toString |> y
-        , (j + 1) * 20 |> toString |> x
-        , fill (if cell then off else on)
-        ]
-        []
+    cellView off i j cell =
+      let color =
+        case cell of
+          Nothing ->
+            off
 
-    rowView on off i row =
-      Array.indexedMap (cellView on off i) row
+          Just on ->
+            on
+      in
+        rect
+          [ width "18"
+          , height "18"
+          , (i + 1) * 20 |> toString |> y
+          , (j + 1) * 20 |> toString |> x
+          , fill color
+          ]
+          []
+
+    rowView off i row =
+      Array.indexedMap (cellView off i) row
         |> Array.toList
 
     scoreView =
-      toBinaryRow score
-        |> rowView "#EEEEEE" "#AAAAAA" (gridHeight - 2)
+      toBinaryRow "#AAAAAA" score
+        |> rowView "#EEEEEE" (gridHeight - 2)
   in
     Array.slice 2 gridHeight grid
-      |> Array.indexedMap (rowView "#CCCCCC" "#666666")
+      |> Array.indexedMap (rowView "#DDDDDD")
       |> Array.toList
       |> (::) scoreView
       |> List.concat

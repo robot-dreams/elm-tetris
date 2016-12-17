@@ -5,7 +5,10 @@ import Array exposing (Array)
 
 
 
-type alias Row = Array Bool
+type alias Cell = Maybe String
+
+
+type alias Row = Array Cell
 
 
 type alias Grid = Array Row
@@ -22,6 +25,7 @@ add (i1, j1) (i2, j2) =
 type alias Piece =
   { origin : Point
   , offsets : List Point
+  , color : String
   }
 
 
