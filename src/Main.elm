@@ -262,14 +262,9 @@ gridView grid score =
     rowView off i row =
       Array.indexedMap (cellView off i) row
         |> Array.toList
-
-    scoreView =
-      toBinaryRow "#AAAAAA" score
-        |> rowView "#EEEEEE" (gridHeight - 2)
   in
     Array.slice 2 gridHeight grid
       |> Array.indexedMap (rowView "#DDDDDD")
       |> Array.toList
-      |> (::) scoreView
       |> List.concat
-      |> svg [ viewBox "0 0 240 500", width "240px", height "500" ]
+      |> svg [ viewBox "0 0 240 440", width "240px", height "440" ]

@@ -112,24 +112,3 @@ rotatePoint rotation (i, j) =
 rotatePiece : Rotation -> Piece -> Piece
 rotatePiece rotation piece =
   { piece | offsets = List.map (rotatePoint rotation) piece.offsets }
-
-
-toBinaryRow : String -> Int -> Row
-toBinaryRow color score =
-  let
-    toBinaryList rest =
-      if rest == 0 then
-        []
-      else if rest % 2 == 0 then
-        Nothing :: toBinaryList (rest // 2)
-      else
-        Just color :: toBinaryList (rest // 2)
-
-    raw =
-      toBinaryList score
-        |> List.reverse
-        |> Array.fromList
-    padding =
-      Array.repeat (gridWidth - (Array.length raw)) Nothing
-  in
-    Array.append padding raw

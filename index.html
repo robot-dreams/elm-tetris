@@ -9455,30 +9455,6 @@ var _user$project$Constants$gridWidth = 10;
 var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, _elm_lang$core$Maybe$Nothing);
 var _user$project$Constants$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridHeight, _user$project$Constants$emptyRow);
 var _user$project$Constants$nextLevel = Math.pow(2, _user$project$Constants$gridWidth);
-var _user$project$Utils$toBinaryRow = F2(
-	function (color, score) {
-		var toBinaryList = function (rest) {
-			return _elm_lang$core$Native_Utils.eq(rest, 0) ? {ctor: '[]'} : (_elm_lang$core$Native_Utils.eq(
-				A2(_elm_lang$core$Basics_ops['%'], rest, 2),
-				0) ? {
-				ctor: '::',
-				_0: _elm_lang$core$Maybe$Nothing,
-				_1: toBinaryList((rest / 2) | 0)
-			} : {
-				ctor: '::',
-				_0: _elm_lang$core$Maybe$Just(color),
-				_1: toBinaryList((rest / 2) | 0)
-			});
-		};
-		var raw = _elm_lang$core$Array$fromList(
-			_elm_lang$core$List$reverse(
-				toBinaryList(score)));
-		var padding = A2(
-			_elm_lang$core$Array$repeat,
-			_user$project$Constants$gridWidth - _elm_lang$core$Array$length(raw),
-			_elm_lang$core$Maybe$Nothing);
-		return A2(_elm_lang$core$Array$append, padding, raw);
-	});
 var _user$project$Utils$rotatePoint = F2(
 	function (rotation, _p0) {
 		var _p1 = _p0;
@@ -9675,38 +9651,27 @@ var _user$project$Main$gridView = F2(
 						A2(cellView, off, i),
 						row));
 			});
-		var scoreView = A3(
-			rowView,
-			'#EEEEEE',
-			_user$project$Constants$gridHeight - 2,
-			A2(_user$project$Utils$toBinaryRow, '#AAAAAA', score));
 		return A2(
 			_elm_lang$svg$Svg$svg,
 			{
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 240 500'),
+				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 240 440'),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$width('240px'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$height('500'),
+						_0: _elm_lang$svg$Svg_Attributes$height('440'),
 						_1: {ctor: '[]'}
 					}
 				}
 			},
 			_elm_lang$core$List$concat(
-				A2(
-					F2(
-						function (x, y) {
-							return {ctor: '::', _0: x, _1: y};
-						}),
-					scoreView,
-					_elm_lang$core$Array$toList(
-						A2(
-							_elm_lang$core$Array$indexedMap,
-							rowView('#DDDDDD'),
-							A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid))))));
+				_elm_lang$core$Array$toList(
+					A2(
+						_elm_lang$core$Array$indexedMap,
+						rowView('#DDDDDD'),
+						A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid)))));
 	});
 var _user$project$Main$view = function (model) {
 	var _p1 = model.piece;
