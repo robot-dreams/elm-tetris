@@ -20,7 +20,7 @@ clearFullRows grid =
     remaining = Array.filter (not << isRowFull) grid
     numCleared = gridHeight - Array.length remaining
   in
-    ( points numCleared
+    ( numCleared
     , Array.append
         (Array.repeat numCleared emptyRow)
         remaining

@@ -38,6 +38,7 @@ type alias Model =
   { piece : Maybe Piece
   , grid : Grid
   , score : Int
+  , totalCleared : Int
   , paused : Bool
   , gameOver : Bool
   }
@@ -48,11 +49,17 @@ init =
   ( { piece = Nothing
     , grid = emptyGrid
     , score = 0
+    , totalCleared = 0
     , paused = False
     , gameOver = False
     }
   , getRandomPiece
   )
+
+
+toLevel : Model -> Int
+toLevel model =
+  model.totalCleared // linesPerLevel
 
 
 
@@ -79,14 +86,17 @@ type Kind
 acceptAndHandle : Model -> Piece -> Model
 acceptAndHandle model piece =
   let
-    (scoreDelta, newGrid) =
+    (numCleared, newGrid) =
       acceptPiece model.grid piece
         |> clearFullRows
+
+    scoreDelta = points numCleared
   in
     { model
       | grid = newGrid
       , piece = Nothing
       , score = model.score + scoreDelta
+      , totalCleared = model.totalCleared + numCleared
     }
 
 
@@ -222,7 +232,7 @@ subscriptions model =
   else
     let
       freq =
-        500 - 50 * (toLevel model.score)
+        500 - 50 * (toLevel model)
           |> toFloat
           |> (*) millisecond
           |> max 25
@@ -277,7 +287,7 @@ view model =
     levelView =
       text_
         [ x "20", y "30", fill "#666666", fontFamily "Courier", fontSize "14" ]
-        [ "Level: " ++ (model.score |> toLevel |> toString) |> text ]
+        [ "Level: " ++ (model |> toLevel |> toString) |> text ]
 
     scoreView =
       text_

@@ -24,29 +24,24 @@ emptyGrid : Grid
 emptyGrid = Array.repeat gridHeight emptyRow
 
 
-nextLevel : Int
-nextLevel = 10
-
-
-toLevel : Int -> Int
-toLevel score =
-  score // nextLevel
+linesPerLevel : Int
+linesPerLevel = 10
 
 
 points : Int -> Int
 points numCleared =
   case numCleared of
     1 ->
-      8
+      40
 
     2 ->
-      20
+      100
 
     3 ->
-      60
+      300
 
     4 ->
-      240
+      1200
 
     _ ->
       0

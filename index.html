@@ -9439,21 +9439,18 @@ var _user$project$Constants$points = function (numCleared) {
 	var _p0 = numCleared;
 	switch (_p0) {
 		case 1:
-			return 8;
+			return 40;
 		case 2:
-			return 20;
+			return 100;
 		case 3:
-			return 60;
+			return 300;
 		case 4:
-			return 240;
+			return 1200;
 		default:
 			return 0;
 	}
 };
-var _user$project$Constants$nextLevel = 10;
-var _user$project$Constants$toLevel = function (score) {
-	return (score / _user$project$Constants$nextLevel) | 0;
-};
+var _user$project$Constants$linesPerLevel = 10;
 var _user$project$Constants$gridHeight = 22;
 var _user$project$Constants$gridWidth = 10;
 var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, _elm_lang$core$Maybe$Nothing);
@@ -9600,7 +9597,7 @@ var _user$project$Utils$clearFullRows = function (grid) {
 	var numCleared = _user$project$Constants$gridHeight - _elm_lang$core$Array$length(remaining);
 	return {
 		ctor: '_Tuple2',
-		_0: _user$project$Constants$points(numCleared),
+		_0: numCleared,
 		_1: A2(
 			_elm_lang$core$Array$append,
 			A2(_elm_lang$core$Array$repeat, numCleared, _user$project$Constants$emptyRow),
@@ -9652,6 +9649,61 @@ var _user$project$Main$rowView = F3(
 				A2(_user$project$Main$cellView, offColor, i),
 				row));
 	});
+var _user$project$Main$acceptAndHandle = F2(
+	function (model, piece) {
+		var _p1 = _user$project$Utils$clearFullRows(
+			A2(_user$project$Utils$acceptPiece, model.grid, piece));
+		var numCleared = _p1._0;
+		var newGrid = _p1._1;
+		var scoreDelta = _user$project$Constants$points(numCleared);
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{grid: newGrid, piece: _elm_lang$core$Maybe$Nothing, score: model.score + scoreDelta, totalCleared: model.totalCleared + numCleared});
+	});
+var _user$project$Main$tryTransform = F3(
+	function (kind, transform, model) {
+		var _p2 = model.piece;
+		if (_p2.ctor === 'Nothing') {
+			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			var _p5 = _p2._0;
+			var transformed = transform(_p5);
+			if (A2(_user$project$Utils$canAcceptPiece, model.grid, transformed)) {
+				var _p3 = kind;
+				if (_p3.ctor === 'Snap') {
+					return {
+						ctor: '_Tuple2',
+						_0: A2(_user$project$Main$acceptAndHandle, model, transformed),
+						_1: _p3._0
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								piece: _elm_lang$core$Maybe$Just(transformed)
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			} else {
+				var _p4 = kind;
+				if (_p4.ctor === 'Sticky') {
+					return {
+						ctor: '_Tuple2',
+						_0: A2(_user$project$Main$acceptAndHandle, model, _p5),
+						_1: _p4._0
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
+			}
+		}
+	});
+var _user$project$Main$toLevel = function (model) {
+	return (model.totalCleared / _user$project$Constants$linesPerLevel) | 0;
+};
 var _user$project$Main$view = function (model) {
 	var statusView = model.gameOver ? A2(
 		_elm_lang$svg$Svg$text_,
@@ -9778,15 +9830,15 @@ var _user$project$Main$view = function (model) {
 					_elm_lang$core$Basics_ops['++'],
 					'Level: ',
 					_elm_lang$core$Basics$toString(
-						_user$project$Constants$toLevel(model.score)))),
+						_user$project$Main$toLevel(model)))),
 			_1: {ctor: '[]'}
 		});
 	var grid = function () {
-		var _p1 = model.piece;
-		if (_p1.ctor === 'Nothing') {
+		var _p6 = model.piece;
+		if (_p6.ctor === 'Nothing') {
 			return model.grid;
 		} else {
-			return A2(_user$project$Utils$acceptPiece, model.grid, _p1._0);
+			return A2(_user$project$Utils$acceptPiece, model.grid, _p6._0);
 		}
 	}();
 	return A2(
@@ -9829,60 +9881,9 @@ var _user$project$Main$view = function (model) {
 								_user$project$Main$rowView('#DDDDDD'),
 								A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid))))))));
 };
-var _user$project$Main$acceptAndHandle = F2(
-	function (model, piece) {
-		var _p2 = _user$project$Utils$clearFullRows(
-			A2(_user$project$Utils$acceptPiece, model.grid, piece));
-		var scoreDelta = _p2._0;
-		var newGrid = _p2._1;
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{grid: newGrid, piece: _elm_lang$core$Maybe$Nothing, score: model.score + scoreDelta});
-	});
-var _user$project$Main$tryTransform = F3(
-	function (kind, transform, model) {
-		var _p3 = model.piece;
-		if (_p3.ctor === 'Nothing') {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		} else {
-			var _p6 = _p3._0;
-			var transformed = transform(_p6);
-			if (A2(_user$project$Utils$canAcceptPiece, model.grid, transformed)) {
-				var _p4 = kind;
-				if (_p4.ctor === 'Snap') {
-					return {
-						ctor: '_Tuple2',
-						_0: A2(_user$project$Main$acceptAndHandle, model, transformed),
-						_1: _p4._0
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								piece: _elm_lang$core$Maybe$Just(transformed)
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
-			} else {
-				var _p5 = kind;
-				if (_p5.ctor === 'Sticky') {
-					return {
-						ctor: '_Tuple2',
-						_0: A2(_user$project$Main$acceptAndHandle, model, _p6),
-						_1: _p5._0
-					};
-				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-				}
-			}
-		}
-	});
-var _user$project$Main$Model = F5(
-	function (a, b, c, d, e) {
-		return {piece: a, grid: b, score: c, paused: d, gameOver: e};
+var _user$project$Main$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {piece: a, grid: b, score: c, totalCleared: d, paused: e, gameOver: f};
 	});
 var _user$project$Main$TogglePause = {ctor: 'TogglePause'};
 var _user$project$Main$AddPiece = function (a) {
@@ -9903,7 +9904,7 @@ var _user$project$Main$getRandomPiece = function () {
 }();
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, paused: false, gameOver: false},
+	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, totalCleared: 0, paused: false, gameOver: false},
 	_1: _user$project$Main$getRandomPiece
 };
 var _user$project$Main$RandomPiece = {ctor: 'RandomPiece'};
@@ -9960,7 +9961,7 @@ var _user$project$Main$subscriptions = function (model) {
 						}),
 					_elm_lang$core$Time$millisecond,
 					_elm_lang$core$Basics$toFloat(
-						500 - (50 * _user$project$Constants$toLevel(model.score)))));
+						500 - (50 * _user$project$Main$toLevel(model)))));
 			return _elm_lang$core$Platform_Sub$batch(
 				{
 					ctor: '::',
