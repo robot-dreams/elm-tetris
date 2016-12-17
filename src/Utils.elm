@@ -95,8 +95,8 @@ acceptPiece grid piece =
   List.foldr (acceptPoint piece.color) grid (renderPiece piece)
 
 
-rotatePoint : Rotation -> Point -> Point
-rotatePoint rotation (i, j) =
+standardRotate : Rotation -> Point -> Point
+standardRotate rotation (i, j) =
   case rotation of
     CW ->
       -- (1, 0) -> ( 0, 1)
@@ -109,6 +109,21 @@ rotatePoint rotation (i, j) =
       (-j, i)
 
 
+rotatePoint : Center -> Rotation -> Point -> Point
+rotatePoint center rotation (i, j) =
+  case center of
+    Cell ->
+      standardRotate rotation (i, j)
+
+    Vertex ->
+      (i, j)
+        |> expand 2
+        |> add (1, -1)
+        |> standardRotate rotation
+        |> add (-1, 1)
+        |> contract 2
+
+
 rotatePiece : Rotation -> Piece -> Piece
 rotatePiece rotation piece =
-  { piece | offsets = List.map (rotatePoint rotation) piece.offsets }
+  { piece | offsets = List.map (rotatePoint piece.center rotation) piece.offsets }

@@ -9251,18 +9251,30 @@ var _user$project$Types$add = F2(
 		var _p3 = _p0;
 		return {ctor: '_Tuple2', _0: _p2._0 + _p3._0, _1: _p2._1 + _p3._1};
 	});
-var _user$project$Types$Piece = F3(
-	function (a, b, c) {
-		return {origin: a, offsets: b, color: c};
+var _user$project$Types$contract = F2(
+	function (c, _p4) {
+		var _p5 = _p4;
+		return {ctor: '_Tuple2', _0: (_p5._0 / c) | 0, _1: (_p5._1 / c) | 0};
 	});
+var _user$project$Types$expand = F2(
+	function (c, _p6) {
+		var _p7 = _p6;
+		return {ctor: '_Tuple2', _0: c * _p7._0, _1: c * _p7._1};
+	});
+var _user$project$Types$Piece = F4(
+	function (a, b, c, d) {
+		return {origin: a, offsets: b, center: c, color: d};
+	});
+var _user$project$Types$Vertex = {ctor: 'Vertex'};
+var _user$project$Types$Cell = {ctor: 'Cell'};
 var _user$project$Types$Right = {ctor: 'Right'};
 var _user$project$Types$Left = {ctor: 'Left'};
 var _user$project$Types$Down = {ctor: 'Down'};
 var _user$project$Types$CCW = {ctor: 'CCW'};
 var _user$project$Types$CW = {ctor: 'CW'};
 var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
-	A3(
-		_elm_lang$core$List$map2,
+	A4(
+		_elm_lang$core$List$map3,
 		_user$project$Types$Piece(
 			{ctor: '_Tuple2', _0: 2, _1: 4}),
 		{
@@ -9408,6 +9420,35 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 		},
 		{
 			ctor: '::',
+			_0: _user$project$Types$Vertex,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Types$Cell,
+				_1: {
+					ctor: '::',
+					_0: _user$project$Types$Cell,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Types$Vertex,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Types$Cell,
+							_1: {
+								ctor: '::',
+								_0: _user$project$Types$Cell,
+								_1: {
+									ctor: '::',
+									_0: _user$project$Types$Cell,
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
 			_0: '#3399CC',
 			_1: {
 				ctor: '::',
@@ -9455,7 +9496,7 @@ var _user$project$Constants$gridHeight = 22;
 var _user$project$Constants$gridWidth = 10;
 var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, _elm_lang$core$Maybe$Nothing);
 var _user$project$Constants$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridHeight, _user$project$Constants$emptyRow);
-var _user$project$Utils$rotatePoint = F2(
+var _user$project$Utils$standardRotate = F2(
 	function (rotation, _p0) {
 		var _p1 = _p0;
 		var _p4 = _p1._1;
@@ -9467,6 +9508,36 @@ var _user$project$Utils$rotatePoint = F2(
 			return {ctor: '_Tuple2', _0: 0 - _p4, _1: _p3};
 		}
 	});
+var _user$project$Utils$rotatePoint = F3(
+	function (center, rotation, _p5) {
+		var _p6 = _p5;
+		var _p9 = _p6._1;
+		var _p8 = _p6._0;
+		var _p7 = center;
+		if (_p7.ctor === 'Cell') {
+			return A2(
+				_user$project$Utils$standardRotate,
+				rotation,
+				{ctor: '_Tuple2', _0: _p8, _1: _p9});
+		} else {
+			return A2(
+				_user$project$Types$contract,
+				2,
+				A2(
+					_user$project$Types$add,
+					{ctor: '_Tuple2', _0: -1, _1: 1},
+					A2(
+						_user$project$Utils$standardRotate,
+						rotation,
+						A2(
+							_user$project$Types$add,
+							{ctor: '_Tuple2', _0: 1, _1: -1},
+							A2(
+								_user$project$Types$expand,
+								2,
+								{ctor: '_Tuple2', _0: _p8, _1: _p9})))));
+		}
+	});
 var _user$project$Utils$rotatePiece = F2(
 	function (rotation, piece) {
 		return _elm_lang$core$Native_Utils.update(
@@ -9474,7 +9545,7 @@ var _user$project$Utils$rotatePiece = F2(
 			{
 				offsets: A2(
 					_elm_lang$core$List$map,
-					_user$project$Utils$rotatePoint(rotation),
+					A2(_user$project$Utils$rotatePoint, piece.center, rotation),
 					piece.offsets)
 			});
 	});
@@ -9487,8 +9558,8 @@ var _user$project$Utils$renderPiece = function (piece) {
 var _user$project$Utils$movePiece = F2(
 	function (direction, piece) {
 		var delta = function () {
-			var _p5 = direction;
-			switch (_p5.ctor) {
+			var _p10 = direction;
+			switch (_p10.ctor) {
 				case 'Down':
 					return {ctor: '_Tuple2', _0: 1, _1: 0};
 				case 'Left':
@@ -9504,21 +9575,21 @@ var _user$project$Utils$movePiece = F2(
 			});
 	});
 var _user$project$Utils$acceptPoint = F3(
-	function (color, _p6, grid) {
-		var _p7 = _p6;
-		var _p9 = _p7._0;
-		var _p8 = A2(_elm_lang$core$Array$get, _p9, grid);
-		if (_p8.ctor === 'Nothing') {
+	function (color, _p11, grid) {
+		var _p12 = _p11;
+		var _p14 = _p12._0;
+		var _p13 = A2(_elm_lang$core$Array$get, _p14, grid);
+		if (_p13.ctor === 'Nothing') {
 			return grid;
 		} else {
 			return A3(
 				_elm_lang$core$Array$set,
-				_p9,
+				_p14,
 				A3(
 					_elm_lang$core$Array$set,
-					_p7._1,
+					_p12._1,
 					_elm_lang$core$Maybe$Just(color),
-					_p8._0),
+					_p13._0),
 				grid);
 		}
 	});
@@ -9531,17 +9602,17 @@ var _user$project$Utils$acceptPiece = F2(
 			_user$project$Utils$renderPiece(piece));
 	});
 var _user$project$Utils$canAcceptPoint = F2(
-	function (grid, _p10) {
-		var _p11 = _p10;
-		var _p12 = A2(_elm_lang$core$Array$get, _p11._0, grid);
-		if (_p12.ctor === 'Nothing') {
+	function (grid, _p15) {
+		var _p16 = _p15;
+		var _p17 = A2(_elm_lang$core$Array$get, _p16._0, grid);
+		if (_p17.ctor === 'Nothing') {
 			return false;
 		} else {
-			var _p13 = A2(_elm_lang$core$Array$get, _p11._1, _p12._0);
-			if (_p13.ctor === 'Nothing') {
+			var _p18 = A2(_elm_lang$core$Array$get, _p16._1, _p17._0);
+			if (_p18.ctor === 'Nothing') {
 				return false;
 			} else {
-				return _elm_lang$core$Native_Utils.eq(_p13._0, _elm_lang$core$Maybe$Nothing);
+				return _elm_lang$core$Native_Utils.eq(_p18._0, _elm_lang$core$Maybe$Nothing);
 			}
 		}
 	});
@@ -9558,10 +9629,10 @@ var _user$project$Utils$dropPiece = F2(
 		while (true) {
 			var step = A2(_user$project$Utils$movePiece, _user$project$Types$Down, piece);
 			if (A2(_user$project$Utils$canAcceptPiece, grid, step)) {
-				var _v8 = grid,
-					_v9 = step;
-				grid = _v8;
-				piece = _v9;
+				var _v10 = grid,
+					_v11 = step;
+				grid = _v10;
+				piece = _v11;
 				continue dropPiece;
 			} else {
 				return piece;
@@ -9571,7 +9642,7 @@ var _user$project$Utils$dropPiece = F2(
 var _user$project$Utils$isRowFull = function (row) {
 	return A3(
 		_elm_lang$core$Array$foldr,
-		function (_p14) {
+		function (_p19) {
 			return F2(
 				function (x, y) {
 					return x && y;
@@ -9582,7 +9653,7 @@ var _user$project$Utils$isRowFull = function (row) {
 							return !_elm_lang$core$Native_Utils.eq(x, y);
 						}),
 					_elm_lang$core$Maybe$Nothing,
-					_p14));
+					_p19));
 		},
 		true,
 		row);
@@ -9590,8 +9661,8 @@ var _user$project$Utils$isRowFull = function (row) {
 var _user$project$Utils$clearFullRows = function (grid) {
 	var remaining = A2(
 		_elm_lang$core$Array$filter,
-		function (_p15) {
-			return !_user$project$Utils$isRowFull(_p15);
+		function (_p20) {
+			return !_user$project$Utils$isRowFull(_p20);
 		},
 		grid);
 	var numCleared = _user$project$Constants$gridHeight - _elm_lang$core$Array$length(remaining);
@@ -9923,7 +9994,7 @@ var _user$project$Main$handleKeyboardInput = function (keyCode) {
 		case 32:
 			return _user$project$Main$Drop;
 		case 38:
-			return _user$project$Main$Rotate(_user$project$Types$CW);
+			return _user$project$Main$Rotate(_user$project$Types$CCW);
 		case 40:
 			return _user$project$Main$Fall;
 		case 37:

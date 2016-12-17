@@ -195,7 +195,7 @@ handleKeyboardInput keyCode =
       Drop
 
     38 -> -- up
-      Rotate CW
+      Rotate CCW
 
     40 -> -- down
       Fall

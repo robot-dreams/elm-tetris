@@ -49,7 +49,7 @@ points numCleared =
 
 pieces : Array Piece
 pieces =
-  List.map2
+  List.map3
     (Piece (2, 4))
     [ [ (-2, 0), (-1, 0), (0, 0), (1, 0) ] -- I
     , [ (-1, 1), ( 0, 1), (1, 1), (1, 0) ] -- J
@@ -58,6 +58,14 @@ pieces =
     , [ (-1, 0), ( 0, 0), (0, 1), (1, 1) ] -- S
     , [ (-1, 0), ( 0, 0), (0, 1), (1, 0) ] -- T
     , [ (-1, 1), ( 0, 0), (0, 1), (1, 0) ] -- Z
+    ]
+    [ Vertex
+    , Cell
+    , Cell
+    , Vertex
+    , Cell
+    , Cell
+    , Cell
     ]
     [ "#3399CC"
     , "#CC33CC"
