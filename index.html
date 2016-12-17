@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html><head><meta charset="UTF-8"><title>Main</title><style>html,head,body { padding:0; margin:0; }
+<html><head><meta charset="UTF-8"><title>Tetris</title><style>html,head,body { padding:0; margin:0; }
 body { font-family: calibri, helvetica, arial, sans-serif; }</style><script type="text/javascript">
 (function() {
 'use strict';
@@ -9703,7 +9703,7 @@ var _user$project$Utils$clearFullRows = function (grid) {
 			remaining)
 	};
 };
-var _user$project$Main$cellView = F4(
+var _user$project$Tetris$cellView = F4(
 	function (offColor, i, j, cell) {
 		var color = function () {
 			var _p0 = cell;
@@ -9740,15 +9740,15 @@ var _user$project$Main$cellView = F4(
 			},
 			{ctor: '[]'});
 	});
-var _user$project$Main$rowView = F3(
+var _user$project$Tetris$rowView = F3(
 	function (offColor, i, row) {
 		return _elm_lang$core$Array$toList(
 			A2(
 				_elm_lang$core$Array$indexedMap,
-				A2(_user$project$Main$cellView, offColor, i),
+				A2(_user$project$Tetris$cellView, offColor, i),
 				row));
 	});
-var _user$project$Main$acceptAndHandle = F2(
+var _user$project$Tetris$acceptAndHandle = F2(
 	function (model, piece) {
 		var _p1 = _user$project$Utils$clearFullRows(
 			A2(_user$project$Utils$acceptPiece, model.grid, piece));
@@ -9759,7 +9759,7 @@ var _user$project$Main$acceptAndHandle = F2(
 			model,
 			{grid: newGrid, piece: _elm_lang$core$Maybe$Nothing, score: model.score + scoreDelta, totalCleared: model.totalCleared + numCleared});
 	});
-var _user$project$Main$tryTransform = F3(
+var _user$project$Tetris$tryTransform = F3(
 	function (kind, transform, model) {
 		var _p2 = model.piece;
 		if (_p2.ctor === 'Nothing') {
@@ -9772,7 +9772,7 @@ var _user$project$Main$tryTransform = F3(
 				if (_p3.ctor === 'Snap') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Main$acceptAndHandle, model, transformed),
+						_0: A2(_user$project$Tetris$acceptAndHandle, model, transformed),
 						_1: _p3._0
 					};
 				} else {
@@ -9791,7 +9791,7 @@ var _user$project$Main$tryTransform = F3(
 				if (_p4.ctor === 'Sticky') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Main$acceptAndHandle, model, _p5),
+						_0: A2(_user$project$Tetris$acceptAndHandle, model, _p5),
 						_1: _p4._0
 					};
 				} else {
@@ -9800,10 +9800,10 @@ var _user$project$Main$tryTransform = F3(
 			}
 		}
 	});
-var _user$project$Main$toLevel = function (model) {
+var _user$project$Tetris$toLevel = function (model) {
 	return (model.totalCleared / _user$project$Constants$linesPerLevel) | 0;
 };
-var _user$project$Main$view = function (model) {
+var _user$project$Tetris$view = function (model) {
 	var statusView = model.gameOver ? A2(
 		_elm_lang$svg$Svg$text_,
 		{
@@ -9929,7 +9929,7 @@ var _user$project$Main$view = function (model) {
 					_elm_lang$core$Basics_ops['++'],
 					'Level: ',
 					_elm_lang$core$Basics$toString(
-						_user$project$Main$toLevel(model)))),
+						_user$project$Tetris$toLevel(model)))),
 			_1: {ctor: '[]'}
 		});
 	var grid = function () {
@@ -9977,18 +9977,18 @@ var _user$project$Main$view = function (model) {
 						_elm_lang$core$Array$toList(
 							A2(
 								_elm_lang$core$Array$indexedMap,
-								_user$project$Main$rowView('#DDDDDD'),
+								_user$project$Tetris$rowView('#DDDDDD'),
 								A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid))))))));
 };
-var _user$project$Main$Model = F6(
+var _user$project$Tetris$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {piece: a, grid: b, score: c, totalCleared: d, paused: e, gameOver: f};
 	});
-var _user$project$Main$TogglePause = {ctor: 'TogglePause'};
-var _user$project$Main$AddPiece = function (a) {
+var _user$project$Tetris$TogglePause = {ctor: 'TogglePause'};
+var _user$project$Tetris$AddPiece = function (a) {
 	return {ctor: 'AddPiece', _0: a};
 };
-var _user$project$Main$getRandomPiece = function () {
+var _user$project$Tetris$getRandomPiece = function () {
 	var index = A2(
 		_elm_lang$core$Random$int,
 		0,
@@ -9999,56 +9999,56 @@ var _user$project$Main$getRandomPiece = function () {
 			return A2(_elm_lang$core$Array$get, i, _user$project$Constants$pieces);
 		},
 		index);
-	return A2(_elm_lang$core$Random$generate, _user$project$Main$AddPiece, maybePiece);
+	return A2(_elm_lang$core$Random$generate, _user$project$Tetris$AddPiece, maybePiece);
 }();
-var _user$project$Main$init = {
+var _user$project$Tetris$init = {
 	ctor: '_Tuple2',
 	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, totalCleared: 0, paused: false, gameOver: false},
-	_1: _user$project$Main$getRandomPiece
+	_1: _user$project$Tetris$getRandomPiece
 };
-var _user$project$Main$RandomPiece = {ctor: 'RandomPiece'};
-var _user$project$Main$Drop = {ctor: 'Drop'};
-var _user$project$Main$Fall = {ctor: 'Fall'};
-var _user$project$Main$Move = function (a) {
+var _user$project$Tetris$RandomPiece = {ctor: 'RandomPiece'};
+var _user$project$Tetris$Drop = {ctor: 'Drop'};
+var _user$project$Tetris$Fall = {ctor: 'Fall'};
+var _user$project$Tetris$Move = function (a) {
 	return {ctor: 'Move', _0: a};
 };
-var _user$project$Main$Rotate = function (a) {
+var _user$project$Tetris$Rotate = function (a) {
 	return {ctor: 'Rotate', _0: a};
 };
-var _user$project$Main$NoOp = {ctor: 'NoOp'};
-var _user$project$Main$handleKeyboardInput = function (keyCode) {
+var _user$project$Tetris$NoOp = {ctor: 'NoOp'};
+var _user$project$Tetris$handleKeyboardInput = function (keyCode) {
 	var _p7 = keyCode;
 	switch (_p7) {
 		case 32:
-			return _user$project$Main$Drop;
+			return _user$project$Tetris$Drop;
 		case 38:
-			return _user$project$Main$Rotate(_user$project$Types$CCW);
+			return _user$project$Tetris$Rotate(_user$project$Types$CCW);
 		case 40:
-			return _user$project$Main$Fall;
+			return _user$project$Tetris$Fall;
 		case 37:
-			return _user$project$Main$Move(_user$project$Types$Left);
+			return _user$project$Tetris$Move(_user$project$Types$Left);
 		case 39:
-			return _user$project$Main$Move(_user$project$Types$Right);
+			return _user$project$Tetris$Move(_user$project$Types$Right);
 		case 27:
-			return _user$project$Main$TogglePause;
+			return _user$project$Tetris$TogglePause;
 		default:
-			return _user$project$Main$NoOp;
+			return _user$project$Tetris$NoOp;
 	}
 };
-var _user$project$Main$waitForUnpause = function (keyCode) {
+var _user$project$Tetris$waitForUnpause = function (keyCode) {
 	var _p8 = keyCode;
 	if (_p8 === 27) {
-		return _user$project$Main$TogglePause;
+		return _user$project$Tetris$TogglePause;
 	} else {
-		return _user$project$Main$NoOp;
+		return _user$project$Tetris$NoOp;
 	}
 };
-var _user$project$Main$subscriptions = function (model) {
+var _user$project$Tetris$subscriptions = function (model) {
 	if (model.gameOver) {
 		return _elm_lang$core$Platform_Sub$none;
 	} else {
 		if (model.paused) {
-			return _elm_lang$keyboard$Keyboard$downs(_user$project$Main$waitForUnpause);
+			return _elm_lang$keyboard$Keyboard$downs(_user$project$Tetris$waitForUnpause);
 		} else {
 			var freq = A2(
 				_elm_lang$core$Basics$max,
@@ -10060,18 +10060,18 @@ var _user$project$Main$subscriptions = function (model) {
 						}),
 					_elm_lang$core$Time$millisecond,
 					_elm_lang$core$Basics$toFloat(
-						500 - (50 * _user$project$Main$toLevel(model)))));
+						500 - (50 * _user$project$Tetris$toLevel(model)))));
 			return _elm_lang$core$Platform_Sub$batch(
 				{
 					ctor: '::',
-					_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$handleKeyboardInput),
+					_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Tetris$handleKeyboardInput),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$core$Time$every,
 							freq,
 							function (_p9) {
-								return _user$project$Main$Fall;
+								return _user$project$Tetris$Fall;
 							}),
 						_1: {ctor: '[]'}
 					}
@@ -10079,14 +10079,14 @@ var _user$project$Main$subscriptions = function (model) {
 		}
 	}
 };
-var _user$project$Main$Snap = function (a) {
+var _user$project$Tetris$Snap = function (a) {
 	return {ctor: 'Snap', _0: a};
 };
-var _user$project$Main$Sticky = function (a) {
+var _user$project$Tetris$Sticky = function (a) {
 	return {ctor: 'Sticky', _0: a};
 };
-var _user$project$Main$Regular = {ctor: 'Regular'};
-var _user$project$Main$update = F2(
+var _user$project$Tetris$Regular = {ctor: 'Regular'};
+var _user$project$Tetris$update = F2(
 	function (msg, model) {
 		var _p10 = msg;
 		switch (_p10.ctor) {
@@ -10094,30 +10094,30 @@ var _user$project$Main$update = F2(
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Rotate':
 				return A3(
-					_user$project$Main$tryTransform,
-					_user$project$Main$Regular,
+					_user$project$Tetris$tryTransform,
+					_user$project$Tetris$Regular,
 					_user$project$Utils$rotatePiece(_p10._0),
 					model);
 			case 'Move':
 				return A3(
-					_user$project$Main$tryTransform,
-					_user$project$Main$Regular,
+					_user$project$Tetris$tryTransform,
+					_user$project$Tetris$Regular,
 					_user$project$Utils$movePiece(_p10._0),
 					model);
 			case 'Fall':
 				return A3(
-					_user$project$Main$tryTransform,
-					_user$project$Main$Sticky(_user$project$Main$getRandomPiece),
+					_user$project$Tetris$tryTransform,
+					_user$project$Tetris$Sticky(_user$project$Tetris$getRandomPiece),
 					_user$project$Utils$movePiece(_user$project$Types$Down),
 					model);
 			case 'Drop':
 				return A3(
-					_user$project$Main$tryTransform,
-					_user$project$Main$Snap(_user$project$Main$getRandomPiece),
+					_user$project$Tetris$tryTransform,
+					_user$project$Tetris$Snap(_user$project$Tetris$getRandomPiece),
 					_user$project$Utils$dropPiece(model.grid),
 					model);
 			case 'RandomPiece':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getRandomPiece};
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Tetris$getRandomPiece};
 			case 'AddPiece':
 				var _p11 = _p10._0;
 				if (_p11.ctor === 'Nothing') {
@@ -10150,12 +10150,12 @@ var _user$project$Main$update = F2(
 				};
 		}
 	});
-var _user$project$Main$main = _elm_lang$html$Html$program(
-	{init: _user$project$Main$init, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions, view: _user$project$Main$view})();
+var _user$project$Tetris$main = _elm_lang$html$Html$program(
+	{init: _user$project$Tetris$init, update: _user$project$Tetris$update, subscriptions: _user$project$Tetris$subscriptions, view: _user$project$Tetris$view})();
 var Elm = {};
-Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+Elm['Tetris'] = Elm['Tetris'] || {};
+if (typeof _user$project$Tetris$main !== 'undefined') {
+    _user$project$Tetris$main(Elm['Tetris'], 'Tetris', undefined);
 }
 
 if (typeof define === "function" && define['amd'])
@@ -10187,4 +10187,4 @@ for (var publicModule in Elm)
 }
 
 }).call(this);
-</script></head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>
+</script></head><body><script type="text/javascript">Elm.Tetris.fullscreen()</script></body></html>

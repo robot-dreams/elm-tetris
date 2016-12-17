@@ -1,3 +1,6 @@
+module Tetris exposing (..)
+
+
 import Array exposing (Array)
 import Html exposing (br, div, Html, program)
 import Keyboard exposing (KeyCode)
