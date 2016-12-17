@@ -9450,11 +9450,14 @@ var _user$project$Constants$points = function (numCleared) {
 			return 0;
 	}
 };
+var _user$project$Constants$nextLevel = 10;
+var _user$project$Constants$toLevel = function (score) {
+	return (score / _user$project$Constants$nextLevel) | 0;
+};
 var _user$project$Constants$gridHeight = 22;
 var _user$project$Constants$gridWidth = 10;
 var _user$project$Constants$emptyRow = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridWidth, _elm_lang$core$Maybe$Nothing);
 var _user$project$Constants$emptyGrid = A2(_elm_lang$core$Array$repeat, _user$project$Constants$gridHeight, _user$project$Constants$emptyRow);
-var _user$project$Constants$nextLevel = Math.pow(2, _user$project$Constants$gridWidth);
 var _user$project$Utils$rotatePoint = F2(
 	function (rotation, _p0) {
 		var _p1 = _p0;
@@ -9604,99 +9607,227 @@ var _user$project$Utils$clearFullRows = function (grid) {
 			remaining)
 	};
 };
-var _user$project$Main$gridView = F2(
-	function (grid, score) {
-		var cellView = F4(
-			function (off, i, j, cell) {
-				var color = function () {
-					var _p0 = cell;
-					if (_p0.ctor === 'Nothing') {
-						return off;
-					} else {
-						return _p0._0;
-					}
-				}();
-				return A2(
-					_elm_lang$svg$Svg$rect,
-					{
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$width('18'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$height('18'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$y(
-									_elm_lang$core$Basics$toString((i + 1) * 20)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$x(
-										_elm_lang$core$Basics$toString((j + 1) * 20)),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$fill(color),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					},
-					{ctor: '[]'});
-			});
-		var rowView = F3(
-			function (off, i, row) {
-				return _elm_lang$core$Array$toList(
-					A2(
-						_elm_lang$core$Array$indexedMap,
-						A2(cellView, off, i),
-						row));
-			});
+var _user$project$Main$cellView = F4(
+	function (offColor, i, j, cell) {
+		var color = function () {
+			var _p0 = cell;
+			if (_p0.ctor === 'Nothing') {
+				return offColor;
+			} else {
+				return _p0._0;
+			}
+		}();
 		return A2(
-			_elm_lang$svg$Svg$svg,
+			_elm_lang$svg$Svg$rect,
 			{
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 240 440'),
+				_0: _elm_lang$svg$Svg_Attributes$width('18'),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$width('240px'),
+					_0: _elm_lang$svg$Svg_Attributes$height('18'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$height('440'),
-						_1: {ctor: '[]'}
+						_0: _elm_lang$svg$Svg_Attributes$y(
+							_elm_lang$core$Basics$toString((i + 3) * 20)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$x(
+								_elm_lang$core$Basics$toString((j + 1) * 20)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$fill(color),
+								_1: {ctor: '[]'}
+							}
+						}
 					}
 				}
 			},
-			_elm_lang$core$List$concat(
-				_elm_lang$core$Array$toList(
-					A2(
-						_elm_lang$core$Array$indexedMap,
-						rowView('#DDDDDD'),
-						A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid)))));
+			{ctor: '[]'});
+	});
+var _user$project$Main$rowView = F3(
+	function (offColor, i, row) {
+		return _elm_lang$core$Array$toList(
+			A2(
+				_elm_lang$core$Array$indexedMap,
+				A2(_user$project$Main$cellView, offColor, i),
+				row));
 	});
 var _user$project$Main$view = function (model) {
-	var _p1 = model.piece;
-	if (_p1.ctor === 'Nothing') {
-		return A2(_user$project$Main$gridView, model.grid, model.score);
-	} else {
-		return A2(
-			_user$project$Main$gridView,
-			A2(_user$project$Utils$acceptPiece, model.grid, _p1._0),
-			model.score);
-	}
-};
-var _user$project$Main$tryLevelUp = function (model) {
-	tryLevelUp:
-	while (true) {
-		if (_elm_lang$core$Native_Utils.cmp(model.score, _user$project$Constants$nextLevel) > -1) {
-			var _v2 = _elm_lang$core$Native_Utils.update(
-				model,
-				{score: model.score - _user$project$Constants$nextLevel, level: model.level + 1});
-			model = _v2;
-			continue tryLevelUp;
+	var statusView = model.gameOver ? A2(
+		_elm_lang$svg$Svg$text_,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x('220'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y('30'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill('#666666'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fontFamily('Courier'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fontSize('14'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$textAnchor('end'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg$text('Game over!'),
+			_1: {ctor: '[]'}
+		}) : (model.paused ? A2(
+		_elm_lang$svg$Svg$text_,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x('220'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y('30'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill('#666666'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fontFamily('Courier'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fontSize('14'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$textAnchor('end'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg$text('Paused [ESC]'),
+			_1: {ctor: '[]'}
+		}) : _elm_lang$svg$Svg$text(''));
+	var scoreView = A2(
+		_elm_lang$svg$Svg$text_,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x('20'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y('50'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill('#666666'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fontFamily('Courier'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fontSize('14'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg$text(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Score: ',
+					_elm_lang$core$Basics$toString(model.score))),
+			_1: {ctor: '[]'}
+		});
+	var levelView = A2(
+		_elm_lang$svg$Svg$text_,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$x('20'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$y('30'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$fill('#666666'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fontFamily('Courier'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fontSize('14'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg$text(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Level: ',
+					_elm_lang$core$Basics$toString(
+						_user$project$Constants$toLevel(model.score)))),
+			_1: {ctor: '[]'}
+		});
+	var grid = function () {
+		var _p1 = model.piece;
+		if (_p1.ctor === 'Nothing') {
+			return model.grid;
 		} else {
-			return model;
+			return A2(_user$project$Utils$acceptPiece, model.grid, _p1._0);
 		}
-	}
+	}();
+	return A2(
+		_elm_lang$svg$Svg$svg,
+		{
+			ctor: '::',
+			_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 240 500'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width('240px'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$height('500px'),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		A2(
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			statusView,
+			A2(
+				F2(
+					function (x, y) {
+						return {ctor: '::', _0: x, _1: y};
+					}),
+				scoreView,
+				A2(
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						}),
+					levelView,
+					_elm_lang$core$List$concat(
+						_elm_lang$core$Array$toList(
+							A2(
+								_elm_lang$core$Array$indexedMap,
+								_user$project$Main$rowView('#DDDDDD'),
+								A3(_elm_lang$core$Array$slice, 2, _user$project$Constants$gridHeight, grid))))))));
 };
 var _user$project$Main$acceptAndHandle = F2(
 	function (model, piece) {
@@ -9704,10 +9835,9 @@ var _user$project$Main$acceptAndHandle = F2(
 			A2(_user$project$Utils$acceptPiece, model.grid, piece));
 		var scoreDelta = _p2._0;
 		var newGrid = _p2._1;
-		return _user$project$Main$tryLevelUp(
-			_elm_lang$core$Native_Utils.update(
-				model,
-				{grid: newGrid, piece: _elm_lang$core$Maybe$Nothing, score: model.score + scoreDelta}));
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{grid: newGrid, piece: _elm_lang$core$Maybe$Nothing, score: model.score + scoreDelta});
 	});
 var _user$project$Main$tryTransform = F3(
 	function (kind, transform, model) {
@@ -9752,8 +9882,9 @@ var _user$project$Main$tryTransform = F3(
 	});
 var _user$project$Main$Model = F5(
 	function (a, b, c, d, e) {
-		return {piece: a, grid: b, level: c, score: d, gameOver: e};
+		return {piece: a, grid: b, score: c, paused: d, gameOver: e};
 	});
+var _user$project$Main$TogglePause = {ctor: 'TogglePause'};
 var _user$project$Main$AddPiece = function (a) {
 	return {ctor: 'AddPiece', _0: a};
 };
@@ -9772,7 +9903,7 @@ var _user$project$Main$getRandomPiece = function () {
 }();
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
-	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, level: 0, gameOver: false},
+	_0: {piece: _elm_lang$core$Maybe$Nothing, grid: _user$project$Constants$emptyGrid, score: 0, paused: false, gameOver: false},
 	_1: _user$project$Main$getRandomPiece
 };
 var _user$project$Main$RandomPiece = {ctor: 'RandomPiece'};
@@ -9798,39 +9929,54 @@ var _user$project$Main$handleKeyboardInput = function (keyCode) {
 			return _user$project$Main$Move(_user$project$Types$Left);
 		case 39:
 			return _user$project$Main$Move(_user$project$Types$Right);
+		case 27:
+			return _user$project$Main$TogglePause;
 		default:
 			return _user$project$Main$NoOp;
+	}
+};
+var _user$project$Main$waitForUnpause = function (keyCode) {
+	var _p8 = keyCode;
+	if (_p8 === 27) {
+		return _user$project$Main$TogglePause;
+	} else {
+		return _user$project$Main$NoOp;
 	}
 };
 var _user$project$Main$subscriptions = function (model) {
 	if (model.gameOver) {
 		return _elm_lang$core$Platform_Sub$none;
 	} else {
-		var freq = A2(
-			_elm_lang$core$Basics$max,
-			25,
-			A2(
-				F2(
-					function (x, y) {
-						return x * y;
-					}),
-				_elm_lang$core$Time$millisecond,
-				_elm_lang$core$Basics$toFloat(500 - (50 * model.level))));
-		return _elm_lang$core$Platform_Sub$batch(
-			{
-				ctor: '::',
-				_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$handleKeyboardInput),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$core$Time$every,
-						freq,
-						function (_p8) {
-							return _user$project$Main$Fall;
+		if (model.paused) {
+			return _elm_lang$keyboard$Keyboard$downs(_user$project$Main$waitForUnpause);
+		} else {
+			var freq = A2(
+				_elm_lang$core$Basics$max,
+				25,
+				A2(
+					F2(
+						function (x, y) {
+							return x * y;
 						}),
-					_1: {ctor: '[]'}
-				}
-			});
+					_elm_lang$core$Time$millisecond,
+					_elm_lang$core$Basics$toFloat(
+						500 - (50 * _user$project$Constants$toLevel(model.score)))));
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _elm_lang$keyboard$Keyboard$downs(_user$project$Main$handleKeyboardInput),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$core$Time$every,
+							freq,
+							function (_p9) {
+								return _user$project$Main$Fall;
+							}),
+						_1: {ctor: '[]'}
+					}
+				});
+		}
 	}
 };
 var _user$project$Main$Snap = function (a) {
@@ -9842,21 +9988,21 @@ var _user$project$Main$Sticky = function (a) {
 var _user$project$Main$Regular = {ctor: 'Regular'};
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p9 = msg;
-		switch (_p9.ctor) {
+		var _p10 = msg;
+		switch (_p10.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Rotate':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Utils$rotatePiece(_p9._0),
+					_user$project$Utils$rotatePiece(_p10._0),
 					model);
 			case 'Move':
 				return A3(
 					_user$project$Main$tryTransform,
 					_user$project$Main$Regular,
-					_user$project$Utils$movePiece(_p9._0),
+					_user$project$Utils$movePiece(_p10._0),
 					model);
 			case 'Fall':
 				return A3(
@@ -9872,18 +10018,18 @@ var _user$project$Main$update = F2(
 					model);
 			case 'RandomPiece':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getRandomPiece};
-			default:
-				var _p10 = _p9._0;
-				if (_p10.ctor === 'Nothing') {
+			case 'AddPiece':
+				var _p11 = _p10._0;
+				if (_p11.ctor === 'Nothing') {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				} else {
-					var _p11 = _p10._0;
-					return A2(_user$project$Utils$canAcceptPiece, model.grid, _p11) ? {
+					var _p12 = _p11._0;
+					return A2(_user$project$Utils$canAcceptPiece, model.grid, _p12) ? {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								piece: _elm_lang$core$Maybe$Just(_p11)
+								piece: _elm_lang$core$Maybe$Just(_p12)
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					} : {
@@ -9894,6 +10040,14 @@ var _user$project$Main$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				}
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{paused: !model.paused}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$main = _elm_lang$html$Html$program(

@@ -25,7 +25,12 @@ emptyGrid = Array.repeat gridHeight emptyRow
 
 
 nextLevel : Int
-nextLevel = 2^gridWidth
+nextLevel = 10
+
+
+toLevel : Int -> Int
+toLevel score =
+  score // nextLevel
 
 
 points : Int -> Int

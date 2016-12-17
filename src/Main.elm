@@ -1,9 +1,10 @@
 import Array exposing (Array)
-import Html exposing (br, div, Html, program, text)
+import Html exposing (br, div, Html, program)
 import Keyboard exposing (KeyCode)
 import Random
-import Svg exposing (rect, svg)
-import Svg.Attributes exposing (fill, height, viewBox, width, x, y)
+import Svg exposing (rect, Svg, svg, text, text_)
+import Svg.Attributes exposing
+  (fill, fontFamily, fontSize, height, textAnchor, viewBox, width, x, y)
 import Task
 import Time exposing (millisecond)
 
@@ -36,8 +37,8 @@ main = program
 type alias Model =
   { piece : Maybe Piece
   , grid : Grid
-  , level : Int
   , score : Int
+  , paused : Bool
   , gameOver : Bool
   }
 
@@ -47,7 +48,7 @@ init =
   ( { piece = Nothing
     , grid = emptyGrid
     , score = 0
-    , level = 0
+    , paused = False
     , gameOver = False
     }
   , getRandomPiece
@@ -66,24 +67,13 @@ type Msg
   | Drop
   | RandomPiece
   | AddPiece (Maybe Piece)
+  | TogglePause
 
 
 type Kind
   = Regular
   | Sticky (Cmd Msg)
   | Snap (Cmd Msg)
-
-
-tryLevelUp : Model -> Model
-tryLevelUp model =
-  if model.score >= nextLevel then
-    tryLevelUp
-      { model
-        | score = model.score - nextLevel
-        , level = model.level + 1
-      }
-  else
-    model
 
 
 acceptAndHandle : Model -> Piece -> Model
@@ -93,12 +83,11 @@ acceptAndHandle model piece =
       acceptPiece model.grid piece
         |> clearFullRows
   in
-    tryLevelUp
-      { model
-        | grid = newGrid
-        , piece = Nothing
-        , score = model.score + scoreDelta
-      }
+    { model
+      | grid = newGrid
+      , piece = Nothing
+      , score = model.score + scoreDelta
+    }
 
 
 tryTransform : Kind -> (Piece -> Piece) -> Model -> (Model, Cmd Msg)
@@ -179,6 +168,11 @@ update msg model =
             , Cmd.none
             )
 
+    TogglePause ->
+      ( { model | paused = not model.paused }
+      , Cmd.none
+      )
+
 
 
 -- SUBSCRIPTIONS
@@ -202,6 +196,19 @@ handleKeyboardInput keyCode =
     39 -> -- right
       Move Right
 
+    27 -> -- esc
+      TogglePause
+
+    _ ->
+      NoOp
+
+
+waitForUnpause : KeyCode -> Msg
+waitForUnpause keyCode =
+  case keyCode of
+    27 -> -- esc
+      TogglePause
+
     _ ->
       NoOp
 
@@ -210,10 +217,12 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   if model.gameOver then
     Sub.none
+  else if model.paused then
+    Keyboard.downs waitForUnpause
   else
     let
       freq =
-        500 - 50 * model.level
+        500 - 50 * (toLevel model.score)
           |> toFloat
           |> (*) millisecond
           |> max 25
@@ -228,43 +237,71 @@ subscriptions model =
 -- VIEW
 
 
+cellView : String -> Int -> Int -> Cell -> Svg Msg
+cellView offColor i j cell =
+  let color =
+    case cell of
+      Nothing ->
+        offColor
+
+      Just cellColor ->
+        cellColor
+  in
+    rect
+      [ width "18"
+      , height "18"
+      , (i + 3) * 20 |> toString |> y
+      , (j + 1) * 20 |> toString |> x
+      , fill color
+      ]
+      []
+
+
+rowView : String -> Int -> Row -> List (Svg Msg)
+rowView offColor i row =
+  Array.indexedMap (cellView offColor i) row
+    |> Array.toList
+
+
 view : Model -> Html Msg
 view model =
-  case model.piece of
-    Nothing ->
-      gridView model.grid model.score
-
-    Just piece ->
-      gridView (acceptPiece model.grid piece) model.score
-
-
-gridView : Grid -> Int -> Html Msg
-gridView grid score =
   let
-    cellView off i j cell =
-      let color =
-        case cell of
-          Nothing ->
-            off
+    grid =
+      case model.piece of
+        Nothing ->
+          model.grid
 
-          Just on ->
-            on
-      in
-        rect
-          [ width "18"
-          , height "18"
-          , (i + 1) * 20 |> toString |> y
-          , (j + 1) * 20 |> toString |> x
-          , fill color
-          ]
-          []
+        Just piece ->
+          acceptPiece model.grid piece
 
-    rowView off i row =
-      Array.indexedMap (cellView off i) row
-        |> Array.toList
+    levelView =
+      text_
+        [ x "20", y "30", fill "#666666", fontFamily "Courier", fontSize "14" ]
+        [ "Level: " ++ (model.score |> toLevel |> toString) |> text ]
+
+    scoreView =
+      text_
+        [ x "20", y "50", fill "#666666", fontFamily "Courier", fontSize "14" ]
+        [ "Score: " ++ (model.score |> toString) |> text ]
+
+    statusView =
+      if model.gameOver then
+        text_
+          [ x "220", y "30", fill "#666666", fontFamily "Courier", fontSize "14", textAnchor "end" ]
+          [ text "Game over!" ]
+      else if model.paused then
+        text_
+          [ x "220", y "30", fill "#666666", fontFamily "Courier", fontSize "14", textAnchor "end" ]
+          [ text "Paused [ESC]" ]
+      else
+        text ""
+
   in
     Array.slice 2 gridHeight grid
       |> Array.indexedMap (rowView "#DDDDDD")
       |> Array.toList
       |> List.concat
-      |> svg [ viewBox "0 0 240 440", width "240px", height "440" ]
+      |> (::) levelView
+      |> (::) scoreView
+      |> (::) statusView
+      |> svg [ viewBox "0 0 240 500", width "240px", height "500px" ]
