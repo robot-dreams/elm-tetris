@@ -47,40 +47,63 @@ points numCleared =
       0
 
 
+-- All following lists correspond to tetrominoes in the order I, J, L, O, S, T, Z
+
+
+-- The J tetromino needs be centered slightly differently when it first enters
+-- the board.
+initialPositions : List Point
+initialPositions =
+  [ (2, 4)
+  , (2, 5)
+  , (2, 4)
+  , (2, 4)
+  , (2, 4)
+  , (2, 4)
+  , (2, 4)
+  ]
+
+
+offsets : List (List Point)
+offsets =
+  [ [ (-2, 0), (-1, 0), (0, 0), (1,  0) ]
+  , [ (-1, 0), ( 0, 0), (1, 0), (1, -1) ]
+  , [ (-1, 0), ( 0, 0), (1, 0), (1,  1) ]
+  , [ (-1, 0), (-1, 1), (0, 0), (0,  1) ]
+  , [ (-1, 0), ( 0, 0), (0, 1), (1,  1) ]
+  , [ (-1, 0), ( 0, 0), (0, 1), (1,  0) ]
+  , [ (-1, 1), ( 0, 0), (0, 1), (1,  0) ]
+  ]
+
+
+-- I and O have slightly different rotation behavior from the other tetrominoes:
+-- their axis of rotation is on the intersection between two grid lines, as
+-- opposed to the middle of a grid cell.
+rotationAxes : List Axis
+rotationAxes =
+  [ Vertex
+  , Cell
+  , Cell
+  , Vertex
+  , Cell
+  , Cell
+  , Cell
+  ]
+
+
+colors : List String
+colors =
+  [ "#3399CC"
+  , "#9933CC"
+  , "#CC3399"
+  , "#888888"
+  , "#66CC33"
+  , "#CC9900"
+  , "#CC3333"
+  ]
+
+
 pieces : Array Piece
 pieces =
-  List.map4
-    Piece
-    [ (2, 4)
-    , (2, 5)
-    , (2, 4)
-    , (2, 4)
-    , (2, 4)
-    , (2, 4)
-    , (2, 4)
-    ]
-    [ [ (-2, 0), (-1, 0), (0, 0), (1,  0) ] -- I
-    , [ (-1, 0), ( 0, 0), (1, 0), (1, -1) ] -- J
-    , [ (-1, 0), ( 0, 0), (1, 0), (1,  1) ] -- L
-    , [ (-1, 0), (-1, 1), (0, 0), (0,  1) ] -- O
-    , [ (-1, 0), ( 0, 0), (0, 1), (1,  1) ] -- S
-    , [ (-1, 0), ( 0, 0), (0, 1), (1,  0) ] -- T
-    , [ (-1, 1), ( 0, 0), (0, 1), (1,  0) ] -- Z
-    ]
-    [ Vertex
-    , Cell
-    , Cell
-    , Vertex
-    , Cell
-    , Cell
-    , Cell
-    ]
-    [ "#3399CC"
-    , "#9933CC"
-    , "#CC3399"
-    , "#888888"
-    , "#66CC33"
-    , "#CC9900"
-    , "#CC3333"
-    ]
+  List.map4 Piece initialPositions offsets rotationAxes colors
     |> Array.fromList

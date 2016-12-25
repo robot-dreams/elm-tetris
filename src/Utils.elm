@@ -109,9 +109,9 @@ standardRotate rotation (i, j) =
       (-j, i)
 
 
-rotatePoint : Center -> Rotation -> Point -> Point
-rotatePoint center rotation (i, j) =
-  case center of
+rotatePoint : Axis -> Rotation -> Point -> Point
+rotatePoint axis rotation (i, j) =
+  case axis of
     Cell ->
       standardRotate rotation (i, j)
 
@@ -126,4 +126,4 @@ rotatePoint center rotation (i, j) =
 
 rotatePiece : Rotation -> Piece -> Piece
 rotatePiece rotation piece =
-  { piece | offsets = List.map (rotatePoint piece.center rotation) piece.offsets }
+  { piece | offsets = List.map (rotatePoint piece.axis rotation) piece.offsets }

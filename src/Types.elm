@@ -32,7 +32,7 @@ add (i1, j1) (i2, j2) =
   (i1 + i2, j1 + j2)
 
 
-type Center
+type Axis
   = Cell
   | Vertex
 
@@ -40,7 +40,7 @@ type Center
 type alias Piece =
   { origin : Point
   , offsets : List Point
-  , center : Center
+  , axis : Axis
   , color : String
   }
 

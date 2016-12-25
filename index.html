@@ -9263,7 +9263,7 @@ var _user$project$Types$expand = F2(
 	});
 var _user$project$Types$Piece = F4(
 	function (a, b, c, d) {
-		return {origin: a, offsets: b, center: c, color: d};
+		return {origin: a, offsets: b, axis: c, color: d};
 	});
 var _user$project$Types$Vertex = {ctor: 'Vertex'};
 var _user$project$Types$Cell = {ctor: 'Cell'};
@@ -9272,53 +9272,116 @@ var _user$project$Types$Left = {ctor: 'Left'};
 var _user$project$Types$Down = {ctor: 'Down'};
 var _user$project$Types$CCW = {ctor: 'CCW'};
 var _user$project$Types$CW = {ctor: 'CW'};
-var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
-	A5(
-		_elm_lang$core$List$map4,
-		_user$project$Types$Piece,
-		{
+var _user$project$Constants$colors = {
+	ctor: '::',
+	_0: '#3399CC',
+	_1: {
+		ctor: '::',
+		_0: '#9933CC',
+		_1: {
 			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 2, _1: 4},
+			_0: '#CC3399',
 			_1: {
 				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: 2, _1: 5},
+				_0: '#888888',
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 2, _1: 4},
+					_0: '#66CC33',
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 2, _1: 4},
+						_0: '#CC9900',
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 2, _1: 4},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 2, _1: 4},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 2, _1: 4},
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: '#CC3333',
+							_1: {ctor: '[]'}
 						}
 					}
 				}
 			}
+		}
+	}
+};
+var _user$project$Constants$rotationAxes = {
+	ctor: '::',
+	_0: _user$project$Types$Vertex,
+	_1: {
+		ctor: '::',
+		_0: _user$project$Types$Cell,
+		_1: {
+			ctor: '::',
+			_0: _user$project$Types$Cell,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Types$Vertex,
+				_1: {
+					ctor: '::',
+					_0: _user$project$Types$Cell,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Types$Cell,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Types$Cell,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Constants$offsets = {
+	ctor: '::',
+	_0: {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: -2, _1: 0},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: -1, _1: 0},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: -1, _1: 0},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 1, _1: -1},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
 		},
-		{
+		_1: {
 			ctor: '::',
 			_0: {
 				ctor: '::',
-				_0: {ctor: '_Tuple2', _0: -2, _1: 0},
+				_0: {ctor: '_Tuple2', _0: -1, _1: 0},
 				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: -1, _1: 0},
+					_0: {ctor: '_Tuple2', _0: 0, _1: 0},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+						_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+							_0: {ctor: '_Tuple2', _0: 1, _1: 1},
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9331,13 +9394,13 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 					_0: {ctor: '_Tuple2', _0: -1, _1: 0},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+						_0: {ctor: '_Tuple2', _0: -1, _1: 1},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+							_0: {ctor: '_Tuple2', _0: 0, _1: 0},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 1, _1: -1},
+								_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9353,7 +9416,7 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 							_0: {ctor: '_Tuple2', _0: 0, _1: 0},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 1, _1: 0},
+								_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 1, _1: 1},
@@ -9369,13 +9432,13 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 							_0: {ctor: '_Tuple2', _0: -1, _1: 0},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: -1, _1: 1},
+								_0: {ctor: '_Tuple2', _0: 0, _1: 0},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 0, _1: 0},
+									_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 0, _1: 1},
+										_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 										_1: {ctor: '[]'}
 									}
 								}
@@ -9385,7 +9448,7 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 							ctor: '::',
 							_0: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: -1, _1: 0},
+								_0: {ctor: '_Tuple2', _0: -1, _1: 1},
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 0, _1: 0},
@@ -9394,116 +9457,51 @@ var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
 										_0: {ctor: '_Tuple2', _0: 0, _1: 1},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 1, _1: 1},
+											_0: {ctor: '_Tuple2', _0: 1, _1: 0},
 											_1: {ctor: '[]'}
 										}
 									}
 								}
 							},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: -1, _1: 0},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 0, _1: 0},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 0, _1: 1},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 1, _1: 0},
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								},
-								_1: {
-									ctor: '::',
-									_0: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: -1, _1: 1},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 0, _1: 0},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 0, _1: 1},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 1, _1: 0},
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									},
-									_1: {ctor: '[]'}
-								}
-							}
+							_1: {ctor: '[]'}
 						}
 					}
 				}
 			}
-		},
-		{
+		}
+	}
+};
+var _user$project$Constants$initialPositions = {
+	ctor: '::',
+	_0: {ctor: '_Tuple2', _0: 2, _1: 4},
+	_1: {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 2, _1: 5},
+		_1: {
 			ctor: '::',
-			_0: _user$project$Types$Vertex,
+			_0: {ctor: '_Tuple2', _0: 2, _1: 4},
 			_1: {
 				ctor: '::',
-				_0: _user$project$Types$Cell,
+				_0: {ctor: '_Tuple2', _0: 2, _1: 4},
 				_1: {
 					ctor: '::',
-					_0: _user$project$Types$Cell,
+					_0: {ctor: '_Tuple2', _0: 2, _1: 4},
 					_1: {
 						ctor: '::',
-						_0: _user$project$Types$Vertex,
+						_0: {ctor: '_Tuple2', _0: 2, _1: 4},
 						_1: {
 							ctor: '::',
-							_0: _user$project$Types$Cell,
-							_1: {
-								ctor: '::',
-								_0: _user$project$Types$Cell,
-								_1: {
-									ctor: '::',
-									_0: _user$project$Types$Cell,
-									_1: {ctor: '[]'}
-								}
-							}
+							_0: {ctor: '_Tuple2', _0: 2, _1: 4},
+							_1: {ctor: '[]'}
 						}
 					}
 				}
 			}
-		},
-		{
-			ctor: '::',
-			_0: '#3399CC',
-			_1: {
-				ctor: '::',
-				_0: '#9933CC',
-				_1: {
-					ctor: '::',
-					_0: '#CC3399',
-					_1: {
-						ctor: '::',
-						_0: '#888888',
-						_1: {
-							ctor: '::',
-							_0: '#66CC33',
-							_1: {
-								ctor: '::',
-								_0: '#CC9900',
-								_1: {
-									ctor: '::',
-									_0: '#CC3333',
-									_1: {ctor: '[]'}
-								}
-							}
-						}
-					}
-				}
-			}
-		}));
+		}
+	}
+};
+var _user$project$Constants$pieces = _elm_lang$core$Array$fromList(
+	A5(_elm_lang$core$List$map4, _user$project$Types$Piece, _user$project$Constants$initialPositions, _user$project$Constants$offsets, _user$project$Constants$rotationAxes, _user$project$Constants$colors));
 var _user$project$Constants$points = function (numCleared) {
 	var _p0 = numCleared;
 	switch (_p0) {
@@ -9537,11 +9535,11 @@ var _user$project$Utils$standardRotate = F2(
 		}
 	});
 var _user$project$Utils$rotatePoint = F3(
-	function (center, rotation, _p5) {
+	function (axis, rotation, _p5) {
 		var _p6 = _p5;
 		var _p9 = _p6._1;
 		var _p8 = _p6._0;
-		var _p7 = center;
+		var _p7 = axis;
 		if (_p7.ctor === 'Cell') {
 			return A2(
 				_user$project$Utils$standardRotate,
@@ -9573,7 +9571,7 @@ var _user$project$Utils$rotatePiece = F2(
 			{
 				offsets: A2(
 					_elm_lang$core$List$map,
-					A2(_user$project$Utils$rotatePoint, piece.center, rotation),
+					A2(_user$project$Utils$rotatePoint, piece.axis, rotation),
 					piece.offsets)
 			});
 	});
