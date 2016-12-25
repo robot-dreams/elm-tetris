@@ -11,7 +11,6 @@ import Svg.Attributes exposing
 import Task
 import Time exposing (millisecond)
 
-
 import Constants exposing (..)
 import Types exposing (..)
 import Utils exposing (..)
@@ -237,8 +236,8 @@ subscriptions model =
       freq =
         500 - 50 * (toLevel model)
           |> toFloat
-          |> (*) millisecond
           |> max 25
+          |> (*) millisecond
     in
       Sub.batch
         [ Keyboard.downs handleKeyboardInput

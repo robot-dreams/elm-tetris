@@ -3,7 +3,6 @@ module Utils exposing (..)
 
 import Array exposing (Array)
 
-
 import Constants exposing (..)
 import Types exposing (..)
 
